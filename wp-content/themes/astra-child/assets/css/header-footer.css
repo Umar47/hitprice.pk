@@ -1,3 +1,43 @@
+@font-face {
+	font-family: "Inter";
+	src: url("../fonts/Inter/Inter-VariableFont_opsz,wght.ttf") format("truetype");
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Inter";
+	src: url("../fonts/Inter/Inter-Italic-VariableFont_opsz,wght.ttf") format("truetype");
+	font-style: italic;
+	font-weight: 100 900;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Poppins";
+	src: url("../fonts/Poppins/Poppins-Regular.ttf") format("truetype");
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Poppins";
+	src: url("../fonts/Poppins/Poppins-SemiBold.ttf") format("truetype");
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Poppins";
+	src: url("../fonts/Poppins/Poppins-Bold.ttf") format("truetype");
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+}
+
 :root {
 	--hitprice-blue: #0053e2;
 	--hitprice-bg: #f6f6f6;
@@ -6,11 +46,62 @@
 	--hitprice-border: #d9dfeb;
 	--hitprice-surface: #ffffff;
 	--hitprice-shell: 1280px;
+	--hitprice-font-body: "Inter", sans-serif;
+	--hitprice-font-heading: "Poppins", sans-serif;
 }
 
 body {
 	background: var(--hitprice-bg);
 	color: var(--hitprice-text);
+	font-family: var(--hitprice-font-body);
+}
+
+body,
+body button,
+body input,
+body select,
+body textarea,
+body .ast-button,
+body .button,
+body .menu-link,
+body .site-description,
+body .entry-content,
+body .entry-content p,
+body .woocommerce,
+body .woocommerce div.product p,
+body .woocommerce div.product span,
+body .woocommerce table,
+body .woocommerce-message,
+body .woocommerce-info,
+body .woocommerce-error {
+	font-family: var(--hitprice-font-body);
+}
+
+button,
+input,
+select,
+textarea {
+	font-family: var(--hitprice-font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.site-title,
+.entry-title,
+.entry-title a,
+.ast-archive-title,
+.page-title,
+.woocommerce-loop-product__title,
+.product_title,
+.woocommerce-products-header__title,
+.hitprice-branding .site-title,
+.hitprice-branding .site-title a,
+.hitprice-footer-block__title {
+	font-family: var(--hitprice-font-heading);
 }
 
 .hitprice-shell {
@@ -109,25 +200,45 @@ body {
 	left: 0;
 }
 
-.hitprice-branding__link {
+.hitprice-branding,
+.hitprice-branding .site-branding,
+.hitprice-branding .ast-site-identity {
+	display: flex;
+	align-items: center;
+}
+
+.hitprice-branding .site-branding {
+	margin: 0;
+}
+
+.hitprice-branding .custom-logo-link,
+.hitprice-branding .site-title a {
 	display: inline-flex;
-	flex-direction: column;
-	gap: 2px;
+	align-items: center;
+}
+
+.hitprice-branding .custom-logo {
+	max-height: 44px;
+	width: auto;
+}
+
+.hitprice-branding .site-title {
+	margin: 0;
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.hitprice-branding .site-title a,
+.hitprice-branding .site-description,
+.hitprice-branding .site-description a {
 	color: var(--hitprice-text);
 }
 
-.hitprice-branding__eyebrow {
-	font-size: 11px;
-	font-weight: 700;
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
-	color: var(--hitprice-blue);
-}
-
-.hitprice-branding__title {
-	font-size: 24px;
-	font-weight: 800;
-	line-height: 1;
+.hitprice-branding .site-description {
+	margin: 4px 0 0;
+	font-size: 12px;
+	color: var(--hitprice-muted);
 }
 
 .hitprice-search {
@@ -176,31 +287,68 @@ body {
 	gap: 8px;
 }
 
-.hitprice-header-action {
+.hitprice-header-cart,
+.hitprice-header-cart .ast-site-header-cart,
+.hitprice-header-cart .ast-site-header-cart-li {
+	display: flex;
+	align-items: center;
+}
+
+.hitprice-header-cart .cart-container {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
+	gap: 10px;
 	min-height: 44px;
 	padding: 0 12px;
 	border: 1px solid var(--hitprice-border);
 	border-radius: 12px;
 	background: #fff;
 	color: var(--hitprice-text);
-	font-weight: 700;
-	font-size: 14px;
 }
 
-.hitprice-header-action__count {
+.hitprice-header-cart__icon {
+	position: relative;
+	display: inline-flex;
+	width: 20px;
+	height: 20px;
+}
+
+.hitprice-header-cart__icon::before {
+	content: "\e854";
+	font-family: Astra;
+	font-size: 20px;
+	line-height: 1;
+}
+
+.hitprice-header-cart .ast-cart-menu-wrap {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-width: 22px;
-	height: 22px;
+}
+
+.hitprice-header-cart .ast-cart-menu-wrap .count {
+	min-width: 24px;
+	min-height: 24px;
 	padding: 0 6px;
+	border-width: 0;
 	border-radius: 999px;
 	background: rgba(0, 83, 226, 0.1);
 	color: var(--hitprice-blue);
 	font-size: 12px;
+	line-height: 24px;
+}
+
+.hitprice-header-cart .ast-cart-menu-wrap .count::after {
+	display: none;
+}
+
+.hitprice-header-cart .ast-site-header-cart-data {
+	display: none;
+}
+
+.hitprice-header-cart:hover .ast-site-header-cart-data,
+.hitprice-header-cart:focus-within .ast-site-header-cart-data {
+	display: block;
 }
 
 .hitprice-header-nav {
@@ -246,6 +394,63 @@ body {
 	border-bottom: 1px solid var(--hitprice-border);
 }
 
+.hitprice-site-footer {
+	background: #0f1728;
+	color: #d9e1f2;
+}
+
+.hitprice-footer-main {
+	padding: 48px 0 32px;
+}
+
+.hitprice-footer-main__grid {
+	display: grid;
+	gap: 28px;
+}
+
+.hitprice-footer-block__title {
+	margin: 0 0 12px;
+	color: #fff;
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.hitprice-footer-block__text {
+	margin: 0;
+	max-width: 480px;
+	color: #b9c3d9;
+}
+
+.hitprice-footer-menu {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.hitprice-footer-menu li + li {
+	margin-top: 10px;
+}
+
+.hitprice-footer-menu a {
+	color: #d9e1f2;
+}
+
+.hitprice-footer-bottom {
+	border-top: 1px solid rgba(217, 225, 242, 0.12);
+}
+
+.hitprice-footer-bottom__inner {
+	display: flex;
+	align-items: center;
+	min-height: 64px;
+}
+
+.hitprice-footer-bottom__copy {
+	margin: 0;
+	font-size: 14px;
+	color: #b9c3d9;
+}
+
 @media (min-width: 768px) {
 	.hitprice-header-bar__links {
 		display: flex;
@@ -259,6 +464,10 @@ body {
 		grid-column: auto;
 		order: initial;
 		padding-bottom: 0;
+	}
+
+	.hitprice-footer-main__grid {
+		grid-template-columns: 1.3fr 1fr;
 	}
 }
 
@@ -277,4 +486,3 @@ body {
 		min-height: 88px;
 	}
 }
-
