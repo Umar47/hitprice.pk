@@ -1,0 +1,185 @@
+/* Product Hero Critical CSS — inlined in <head>, must stay under 5KB */
+
+.hp-product-layout {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0 40px;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 24px 20px 0;
+}
+
+.hp-product-layout .woocommerce-product-gallery {
+	grid-column: 1;
+	position: sticky;
+	top: 24px;
+	align-self: start;
+}
+
+.hp-product-layout .woocommerce-product-gallery img {
+	width: 100%;
+	height: auto;
+	border-radius: 8px;
+}
+
+.hp-product-layout .summary.entry-summary {
+	grid-column: 2;
+	padding: 0;
+}
+
+.hp-product-layout .summary .product_title {
+	font-family: 'Poppins', sans-serif;
+	font-size: 28px;
+	font-weight: 600;
+	line-height: 1.25;
+	color: #1a1a1a;
+	margin: 0 0 8px;
+}
+
+.hp-product-layout .summary .woocommerce-product-rating {
+	margin-bottom: 12px;
+}
+
+.hp-product-layout .summary .price {
+	font-size: 24px;
+	font-weight: 700;
+	color: #1a1a1a;
+	margin-bottom: 16px;
+	display: block;
+}
+
+.hp-product-layout .summary .price del {
+	color: #757575;
+	font-weight: 400;
+	font-size: 18px;
+}
+
+.hp-product-layout .summary .price ins {
+	text-decoration: none;
+	color: #d32f2f;
+}
+
+.hp-product-layout .summary .woocommerce-product-details__short-description {
+	font-size: 15px;
+	line-height: 1.6;
+	color: #333;
+	margin-bottom: 20px;
+}
+
+.hp-product-layout .summary .single_add_to_cart_button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: #0053e2;
+	color: #fff;
+	border: none;
+	border-radius: 24px;
+	padding: 14px 32px;
+	font-size: 16px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s;
+	min-width: 200px;
+}
+
+.hp-product-layout .summary .single_add_to_cart_button:hover {
+	background: #003da5;
+}
+
+.hp-product-layout .summary .variations {
+	margin-bottom: 20px;
+}
+
+.hp-product-layout .summary .variations td.label {
+	font-weight: 600;
+	font-size: 14px;
+	color: #333;
+	padding-bottom: 6px;
+}
+
+.hp-product-layout .summary .variations select {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	font-size: 14px;
+}
+
+/* Swatch overlay — visible only when JS adds this class */
+.hp-has-swatches .variations select {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.hp-swatches {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.hp-swatch {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	height: 44px;
+	padding: 0 14px;
+	border: 2px solid #d0d0d0;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #333;
+	background: #fff;
+	cursor: pointer;
+	transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.hp-swatch:hover {
+	border-color: #0053e2;
+}
+
+.hp-swatch.is-active {
+	border-color: #0053e2;
+	box-shadow: 0 0 0 1px #0053e2;
+	color: #0053e2;
+	font-weight: 600;
+}
+
+.hp-swatch--color {
+	width: 36px;
+	height: 36px;
+	min-width: 36px;
+	padding: 0;
+	border-radius: 50%;
+	border-width: 3px;
+}
+
+.hp-swatch--color.is-active {
+	box-shadow: 0 0 0 2px #0053e2;
+}
+
+@media (max-width: 768px) {
+	.hp-product-layout {
+		grid-template-columns: 1fr;
+		gap: 16px 0;
+		padding: 16px 16px 0;
+	}
+
+	.hp-product-layout .woocommerce-product-gallery {
+		position: static;
+	}
+
+	.hp-product-layout .summary .product_title {
+		font-size: 22px;
+	}
+
+	.hp-product-layout .summary .price {
+		font-size: 20px;
+	}
+
+	.hp-product-layout .summary .single_add_to_cart_button {
+		width: 100%;
+	}
+}

@@ -1,0 +1,13 @@
+# Uploads
+wp-content/uploads/
+
+# Plugins — managed outside version control
+wp-content/plugins/advanced-custom-fields-pro/
+wp-content/plugins/astra-sites/
+wp-content/plugins/classic-editor/
+wp-content/plugins/elementor/
+wp-content/plugins/google-listings-and-ads/
+wp-content/plugins/pinterest-for-woocommerce/
+wp-content/plugins/query-monitor/
+wp-content/plugins/snapchat-for-woocommerce/
+wp-content/plugins/wpforms-lite/

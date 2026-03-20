@@ -17,9 +17,11 @@ $cart_count = hitprice_get_cart_count();
 			<div class="ast-site-header-cart-li">
 				<a href="<?php echo esc_url( hitprice_get_cart_url() ); ?>" class="cart-container ast-cart-desktop-position-left ast-cart-mobile-position-left ast-cart-tablet-position-left" aria-label="<?php echo esc_attr( sprintf( __( 'View shopping cart, %d items', 'hitprice' ), $cart_count ) ); ?>">
 					<span class="screen-reader-text"><?php esc_html_e( 'Cart', 'hitprice' ); ?></span>
-					<span class="hitprice-header-cart__icon ast-icon-shopping-bag" aria-hidden="true"></span>
-					<div class="ast-cart-menu-wrap" aria-hidden="true">
-						<span class="count">
+					<span class="hitprice-header-cart__icon ast-icon-shopping-bag" aria-hidden="true">
+						<?php hitprice_render_header_cart_badge(); ?>
+					</span>
+					<div class="ast-cart-menu-wrap hitprice-header-cart__count-wrap" aria-hidden="true">
+						<span class="count hitprice-header-cart__count<?php echo $cart_count > 0 ? ' has-items' : ''; ?>">
 							<span class="ast-count-text"><?php echo esc_html( $cart_count ); ?></span>
 						</span>
 					</div>
