@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"C:\\\\Users\\\\Muhammad Umar\\\\Local Sites\\\\hit-price\\\\app\\\\public\\\\wp-content\\\\themes\\\\astra\" -name \"*woocommerce*.css\" -not -path \"*minified*\" 2>/dev/null | head -5)",
+      "Bash(ls \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public/wp-content/debug.log\" 2>/dev/null; ls \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public/wp-content/uploads/wc-logs/fatal-errors-\"* 2>/dev/null)",
+      "Bash(cd \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public\" && php -l wp-content/themes/astra-child/inc/template-hooks.php && php -l wp-content/themes/astra-child/inc/template-functions.php && php -l wp-content/themes/astra-child/inc/theme-setup.php && php -l wp-content/plugins/hitprice-helper/hitprice-helper.php && php -l wp-content/plugins/hitprice-helper/inc/product/product-data.php && php -l wp-content/plugins/hitprice-helper/inc/acf/product-fields.php)",
+      "Read(//c/Users/Muhammad Umar/Local Sites/hit-price/conf/php/**)",
+      "Read(//c/xampp/php/**)",
+      "Read(//c/Users/Muhammad Umar/AppData/Roaming/Local/lightning-services/**)",
+      "Bash(PHP=\"C:/Users/Muhammad Umar/AppData/Roaming/Local/lightning-services/php-8.2.27+1/bin/win64/php.exe\" && cd \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public\" && \"$PHP\" -l wp-content/themes/astra-child/inc/template-hooks.php && \"$PHP\" -l wp-content/themes/astra-child/inc/template-functions.php && \"$PHP\" -l wp-content/themes/astra-child/inc/theme-setup.php && \"$PHP\" -l wp-content/plugins/hitprice-helper/hitprice-helper.php && \"$PHP\" -l wp-content/plugins/hitprice-helper/inc/product/product-data.php && \"$PHP\" -l wp-content/plugins/hitprice-helper/inc/acf/product-fields.php)",
+      "Bash(cat \"C:\\\\Users\\\\Muhammad Umar\\\\Local Sites\\\\hit-price\\\\app\\\\public\\\\wp-content\\\\themes\\\\astra\\\\assets\\\\css\\\\minified\\\\compatibility\\\\woocommerce\\\\woocommerce-layout.min.css\" | tr '{' '\\\\n{' | grep -A1 \"div.product\" | head -20)"
+    ]
+  }
+}

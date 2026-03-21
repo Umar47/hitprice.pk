@@ -1,5 +1,39 @@
 /* Product Sections CSS — loaded deferred */
 
+/* ---- Gallery controls ---- */
+.hp-gallery__arrow{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;min-width:40px;min-height:40px;border:none;border-radius:50%;background:rgba(255,255,255,.9);color:#333;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.1);transition:background .2s;z-index:2;padding:0;line-height:1}
+.hp-gallery__arrow svg{width:24px;height:24px;flex-shrink:0;display:block}
+.hp-gallery__arrow:hover{background:#fff}
+.hp-gallery__arrow--prev{left:12px}
+.hp-gallery__arrow--next{right:12px}
+.hp-gallery__thumbs{display:flex;gap:8px;margin-top:12px;overflow-x:auto;padding:4px 0;scrollbar-width:thin}
+.hp-gallery__thumb{flex:0 0 64px;width:64px;height:64px;border:2px solid transparent;border-radius:8px;padding:0;background:#f8f8f8;cursor:pointer;overflow:hidden;transition:border-color .15s}
+.hp-gallery__thumb.is-active,.hp-gallery__thumb:hover{border-color:#0053e2}
+.hp-gallery__thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ---- Swatches ---- */
+.hp-has-swatches .variations select{position:absolute;opacity:0;pointer-events:none}
+.hp-swatches{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.hp-swatch{display:inline-flex;align-items:center;justify-content:center;min-width:48px;height:48px;padding:0 16px;border:2px solid #d0d0d0;border-radius:8px;font-size:14px;font-weight:500;color:#333;background:#fff;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.hp-swatch:hover{border-color:#0053e2}
+.hp-swatch.is-active{border-color:#0053e2;box-shadow:0 0 0 1px #0053e2;color:#0053e2;font-weight:600}
+.hp-swatch--color{width:40px;height:40px;min-width:40px;padding:0;border-radius:50%;border-width:3px}
+.hp-swatch--color.is-active{box-shadow:0 0 0 2px #0053e2}
+
+/* ---- Quantity ---- */
+.hp-product-layout .summary .quantity {
+	margin-bottom: 16px;
+}
+
+.hp-product-layout .summary .quantity .qty {
+	width: 72px;
+	padding: 10px 8px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	font-size: 15px;
+	text-align: center;
+}
+
 /* ---- Addons ---- */
 .hp-addons {
 	border: 1px solid #e0e0e0;

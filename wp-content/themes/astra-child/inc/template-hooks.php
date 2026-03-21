@@ -47,9 +47,11 @@ function hitprice_register_product_hooks() {
 		return;
 	}
 
-	// Wrap product content in grid layout.
-	add_action( 'woocommerce_before_single_product', 'hp_render_product_layout_open', 5 );
-	add_action( 'woocommerce_after_single_product_summary', 'hp_render_product_layout_close', 5 );
+	// Wrap gallery + summary in grid layout.
+	// Opens inside <div class="product">, before gallery renders.
+	// Closes after summary, before tabs/related.
+	add_action( 'woocommerce_before_single_product_summary', 'hp_render_product_layout_open', 1 );
+	add_action( 'woocommerce_after_single_product_summary', 'hp_render_product_layout_close', 1 );
 
 	// Remove unwanted summary hooks.
 	remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );

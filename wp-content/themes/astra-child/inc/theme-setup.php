@@ -164,3 +164,31 @@ function hitprice_register_widget_areas() {
 	);
 }
 add_action( 'widgets_init', 'hitprice_register_widget_areas' );
+
+/**
+ * Force full-width, no-sidebar layout on single product pages.
+ *
+ * Astra's default boxed/sidebar layout constrains the content area,
+ * preventing the product grid from using the full viewport width.
+ */
+function hitprice_force_product_fullwidth_layout( $layout ) {
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		return 'no-sidebar';
+	}
+	return $layout;
+}
+add_filter( 'astra_page_layout', 'hitprice_force_product_fullwidth_layout' );
+
+/**
+ * Force full-width content style on single product pages.
+ *
+ * @param string $layout Content layout.
+ * @return string
+ */
+function hitprice_force_product_content_layout( $layout ) {
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		return 'page-builder';
+	}
+	return $layout;
+}
+add_filter( 'astra_get_content_layout', 'hitprice_force_product_content_layout' );
