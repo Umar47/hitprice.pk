@@ -56,6 +56,12 @@ $button_text   = $product->supports( 'ajax_add_to_cart' ) && $product->is_purcha
 		</div>
 
 		<div class="hitprice-product-card__actions">
+			<?php if ( function_exists( 'hpc_compare_button' ) ) : ?>
+				<label class="hitprice-product-card__compare">
+					<input type="checkbox" class="hpc-compare-check" data-product-id="<?php echo esc_attr( $product_id ); ?>">
+					<span class="hitprice-product-card__compare-label"><?php esc_html_e( 'Compare', 'hitprice-compare' ); ?></span>
+				</label>
+			<?php endif; ?>
 			<a class="hitprice-product-card__link" href="<?php echo esc_url( $product_url ); ?>"><?php esc_html_e( 'View product', 'hitprice' ); ?></a>
 			<?php
 			echo wp_kses_post(
