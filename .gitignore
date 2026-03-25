@@ -1,15 +1,23 @@
-# Uploads
-wp-content/uploads/
+# Ignore everything in wp-content
+wp-content/*
 
-# Plugins — managed outside version control
-wp-content/plugins/advanced-custom-fields-pro/
-wp-content/plugins/astra-sites/
-wp-content/plugins/classic-editor/
-wp-content/plugins/elementor/
-wp-content/plugins/google-listings-and-ads/
-wp-content/plugins/pinterest-for-woocommerce/
-wp-content/plugins/query-monitor/
-wp-content/plugins/snapchat-for-woocommerce/
-wp-content/plugins/wpforms-lite/
-wp-content/uploads/2026/03/logo-150x40.png
-wp-content/uploads/2026/03/logo-100x40.png
+# Allow our custom plugins
+!wp-content/plugins/
+wp-content/plugins/*
+!wp-content/plugins/hitprice-helper/
+!wp-content/plugins/hitprice-compare/
+
+# Allow our child theme
+!wp-content/themes/
+wp-content/themes/*
+!wp-content/themes/astra-child/
+
+# Ignore uploads, cache, upgrade dirs
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+*.log
