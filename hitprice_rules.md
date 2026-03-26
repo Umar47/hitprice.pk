@@ -181,22 +181,86 @@ Priority order:
 
 ---
 
-### 5. Security Standards (MANDATORY)
-- ALWAYS:
-  - Sanitize input (`sanitize_text_field`, etc.)
-  - Escape output (`esc_html`, `esc_attr`, etc.)
-  - Use nonces for forms and actions
-  - Validate all external data
+### 5. Global Security & Engineering Standard (MANDATORY)
 
-- NEVER:
-  - Trust user input
-  - Expose sensitive data
-  - Allow direct file access
+These rules apply to ALL systems: WordPress plugins, APIs, automation scripts, cron jobs, AI integrations, frontend/backend code. Security is a FIRST-CLASS requirement, not optional.
 
-- Use:
+#### 5.1 Zero Trust Principle
+- Treat ALL input as untrusted: user input, admin input, API responses
+- Never assume safety
+- Always validate and sanitize
+
+#### 5.2 Input / Output Security
+- Sanitize ALL inputs:
+  - `sanitize_text_field()`, `sanitize_email()`, `intval()`, `floatval()`
+  - `wp_kses_post()` for controlled HTML only
+- Escape ALL outputs:
+  - `esc_html()`, `esc_attr()`, `esc_url()`
+
+#### 5.3 Authentication & Authorization
+- Enforce capability checks: `current_user_can()`
+- Apply least privilege: no unnecessary admin-level access
+
+#### 5.4 CSRF & Request Protection
+- Use nonces in ALL forms/actions:
+  - `wp_create_nonce()`, `wp_verify_nonce()`
+
+#### 5.5 Database Security
+- Use `$wpdb->prepare()` ALWAYS
+- Avoid raw SQL queries
+- Prefer WordPress APIs when possible
+
+#### 5.6 Secret Management
+- NEVER hardcode API keys, tokens, or credentials
+- Store securely in `wp-config.php` or environment variables
+
+#### 5.7 API & External Call Security
+- Validate all API responses
+- Handle failures gracefully
+- Add timeouts, retries, and rate limiting
+
+#### 5.8 File & Access Security
+- Prevent direct file access:
   ```php
   if ( ! defined( 'ABSPATH' ) ) exit;
   ```
+- Restrict file permissions
+
+#### 5.9 Error Handling
+- Never expose stack traces, API keys, or internal paths
+- Log errors securely
+
+#### 5.10 XSS / Injection Prevention
+- Escape output strictly
+- Sanitize stored data
+- Validate before DB insert
+
+#### 5.11 Automation & AI Security
+- Validate AI output before saving
+- Strip unsafe HTML/scripts
+- Limit generation frequency and prevent API abuse
+
+#### 5.12 Logging & Auditing
+- Track who generated content and when actions occurred
+- Maintain logs for debugging
+
+#### 5.13 Performance + Security Balance
+- Avoid heavy queries
+- Cache where needed
+- Prevent abuse via rate limits
+
+#### 5.14 Mandatory Security Review
+- For EVERY feature or code block, include a security review:
+  - Identify risks
+  - Explain mitigation
+  - Suggest improvements
+
+#### 5.15 Hard Rule
+- If any implementation is insecure, exposing data, or lacking validation:
+  1. Stop
+  2. Fix it
+  3. Re-evaluate
+- Security is part of the architecture, not a patch
 
 ---
 

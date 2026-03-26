@@ -6,6 +6,7 @@ wp-content/*
 wp-content/plugins/*
 !wp-content/plugins/hitprice-helper/
 !wp-content/plugins/hitprice-compare/
+!wp-content/plugins/hitprice-content-engine/
 
 # Allow our child theme
 !wp-content/themes/

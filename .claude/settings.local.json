@@ -8,7 +8,12 @@
       "Read(//c/xampp/php/**)",
       "Read(//c/Users/Muhammad Umar/AppData/Roaming/Local/lightning-services/**)",
       "Bash(PHP=\"C:/Users/Muhammad Umar/AppData/Roaming/Local/lightning-services/php-8.2.27+1/bin/win64/php.exe\" && cd \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public\" && \"$PHP\" -l wp-content/themes/astra-child/inc/template-hooks.php && \"$PHP\" -l wp-content/themes/astra-child/inc/template-functions.php && \"$PHP\" -l wp-content/themes/astra-child/inc/theme-setup.php && \"$PHP\" -l wp-content/plugins/hitprice-helper/hitprice-helper.php && \"$PHP\" -l wp-content/plugins/hitprice-helper/inc/product/product-data.php && \"$PHP\" -l wp-content/plugins/hitprice-helper/inc/acf/product-fields.php)",
-      "Bash(cat \"C:\\\\Users\\\\Muhammad Umar\\\\Local Sites\\\\hit-price\\\\app\\\\public\\\\wp-content\\\\themes\\\\astra\\\\assets\\\\css\\\\minified\\\\compatibility\\\\woocommerce\\\\woocommerce-layout.min.css\" | tr '{' '\\\\n{' | grep -A1 \"div.product\" | head -20)"
+      "Bash(cat \"C:\\\\Users\\\\Muhammad Umar\\\\Local Sites\\\\hit-price\\\\app\\\\public\\\\wp-content\\\\themes\\\\astra\\\\assets\\\\css\\\\minified\\\\compatibility\\\\woocommerce\\\\woocommerce-layout.min.css\" | tr '{' '\\\\n{' | grep -A1 \"div.product\" | head -20)",
+      "Bash(mkdir -p \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public/wp-content/plugins/hitprice-content-engine/inc\")",
+      "Bash(mkdir -p \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public/wp-content/plugins/hitprice-content-engine/admin/views\")",
+      "Bash(mkdir -p \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public/wp-content/plugins/hitprice-content-engine/admin/css\")",
+      "Bash(mkdir -p \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public/wp-content/plugins/hitprice-content-engine/admin/js\")",
+      "Bash(mkdir -p \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public/wp-content/plugins/hitprice-content-engine/templates/prompts\")"
     ]
   }
 }
