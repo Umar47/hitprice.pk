@@ -32,7 +32,12 @@ jobs:
         with:
           languages: ${{ matrix.language }}
 
-      - name: Autobuild
+      - name: Skip Autobuild for PHP
+        if: matrix.language == 'php'
+        run: echo "Skipping build for PHP"
+
+      - name: Autobuild (JS only)
+        if: matrix.language != 'php'
         uses: github/codeql-action/autobuild@v3
 
       - name: Perform CodeQL Analysis
