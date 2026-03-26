@@ -1,9 +1,12 @@
-name: CodeQL
+name: "CodeQL"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
   pull_request:
+    branches: [ "main", "master" ]
+  schedule:
+    - cron: '0 0 * * 0'
 
 jobs:
   analyze:
@@ -16,11 +19,12 @@ jobs:
       security-events: write
 
     strategy:
+      fail-fast: false
       matrix:
         language: [ 'javascript', 'php' ]
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Initialize CodeQL
