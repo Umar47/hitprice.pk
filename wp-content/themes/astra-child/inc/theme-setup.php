@@ -63,6 +63,7 @@ function hitprice_enqueue_child_assets() {
 			filemtime( get_stylesheet_directory() . '/assets/js/single-product.js' ),
 			true
 		);
+
 	}
 
 	if ( function_exists( 'is_woocommerce' ) && ( is_shop() || is_product_taxonomy() ) ) {

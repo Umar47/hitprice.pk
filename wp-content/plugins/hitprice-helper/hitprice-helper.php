@@ -17,5 +17,6 @@ define( 'HITPRICE_HELPER_URL', plugin_dir_url( __FILE__ ) );
 
 require_once HITPRICE_HELPER_PATH . 'inc/acf/homepage-fields.php';
 require_once HITPRICE_HELPER_PATH . 'inc/acf/product-fields.php';
+require_once HITPRICE_HELPER_PATH . 'inc/acf/swatch-fields.php';
 require_once HITPRICE_HELPER_PATH . 'inc/homepage/homepage-data.php';
 require_once HITPRICE_HELPER_PATH . 'inc/product/product-data.php';

@@ -293,6 +293,9 @@
 		var form = document.querySelector('.variations_form');
 		if (!form) return;
 
+		// Build per-attribute color overrides from WooCommerce variation data.
+		var variationColors = buildVariationColorMap(form);
+
 		var rows = form.querySelectorAll('.variations tr');
 		if (!rows.length) return;
 
@@ -302,6 +305,10 @@
 
 			var options = select.querySelectorAll('option');
 			if (options.length <= 1) return;
+
+			// Match this select to its attribute key in the variation JSON.
+			var attrName = select.getAttribute('data-attribute_name') || select.getAttribute('name') || '';
+			var attrOverrides = variationColors[attrName] || {};
 
 			var container = document.createElement('div');
 			container.className = 'hp-swatches';
@@ -315,10 +322,12 @@
 				swatch.setAttribute('data-value', option.value);
 
 				var text = option.textContent.trim();
-				if (isColorName(text)) {
+				var color = detectColor(text, attrOverrides);
+				if (color) {
 					swatch.classList.add('hp-swatch--color');
-					swatch.style.backgroundColor = getColorHex(text);
+					swatch.style.backgroundColor = color;
 					swatch.setAttribute('aria-label', text);
+					swatch.setAttribute('title', text);
 				} else {
 					swatch.textContent = text;
 				}
@@ -363,17 +372,125 @@
 		});
 	}
 
+	/* ---- Color detection ---- */
+
+	/**
+	 * Build per-attribute color override maps from WooCommerce variation JSON.
+	 *
+	 * Reads hp_swatch_color from each variation and maps attribute values
+	 * to their admin-defined hex. Uses a consistency check: if the same
+	 * attribute value maps to different colors across variations, it is
+	 * discarded (indicates a non-color attribute like storage/size).
+	 *
+	 * @param {Element} form The .variations_form element.
+	 * @return {Object} { attribute_name: { value: hex } }
+	 */
+	function buildVariationColorMap(form) {
+		var raw = form.getAttribute('data-product_variations');
+		var variations;
+		try {
+			variations = JSON.parse(raw);
+		} catch (e) {
+			return {};
+		}
+		if (!variations || !Array.isArray(variations)) return {};
+
+		var attrMaps  = {};  // attrName → { value → hex }
+		var conflicts = {};  // attrName → { value → true }
+
+		variations.forEach(function (v) {
+			if (!v.hp_swatch_color) return;
+			var attrs = v.attributes || {};
+
+			Object.keys(attrs).forEach(function (attrName) {
+				var value = (attrs[attrName] || '').toLowerCase().trim();
+				if (!value) return;
+
+				if (!attrMaps[attrName])  attrMaps[attrName]  = {};
+				if (!conflicts[attrName]) conflicts[attrName] = {};
+
+				if (value in attrMaps[attrName]) {
+					if (attrMaps[attrName][value] !== v.hp_swatch_color) {
+						conflicts[attrName][value] = true;
+					}
+				} else {
+					attrMaps[attrName][value] = v.hp_swatch_color;
+				}
+			});
+		});
+
+		// Remove values that mapped to different colors (non-color attributes).
+		Object.keys(conflicts).forEach(function (attrName) {
+			Object.keys(conflicts[attrName]).forEach(function (value) {
+				delete attrMaps[attrName][value];
+			});
+		});
+
+		return attrMaps;
+	}
+
 	var COLOR_MAP = {
 		'black': '#000', 'white': '#fff', 'red': '#d32f2f', 'blue': '#1976d2',
 		'green': '#388e3c', 'yellow': '#fbc02d', 'pink': '#e91e63', 'purple': '#7b1fa2',
 		'orange': '#f57c00', 'gray': '#757575', 'grey': '#757575', 'gold': '#c8a415',
 		'silver': '#c0c0c0', 'navy': '#0d3b66', 'teal': '#00897b', 'brown': '#795548',
 		'midnight': '#191970', 'natural titanium': '#8c8479', 'desert titanium': '#c4a882',
-		'white titanium': '#e8e6e1', 'black titanium': '#3c3c3c'
+		'white titanium': '#e8e6e1', 'black titanium': '#3c3c3c',
+		'lime': '#00ff00', 'cyan': '#00bcd4', 'magenta': '#e91e63', 'maroon': '#800000',
+		'olive': '#808000', 'coral': '#ff7f50', 'salmon': '#fa8072', 'ivory': '#fffff0',
+		'beige': '#f5f5dc', 'turquoise': '#40e0d0', 'indigo': '#3f51b5', 'violet': '#ee82ee',
+		'crimson': '#dc143c', 'khaki': '#c3b091', 'lavender': '#e6e6fa', 'peach': '#ffcba4',
+		'rose gold': '#b76e79', 'charcoal': '#36454f', 'cream': '#fffdd0', 'mint': '#98ff98',
+		'bronze': '#cd7f32', 'copper': '#b87333', 'platinum': '#e5e4e2'
 	};
 
-	function isColorName(text) { return text.toLowerCase() in COLOR_MAP; }
-	function getColorHex(text) { return COLOR_MAP[text.toLowerCase()] || '#ccc'; }
+	/**
+	 * Try to detect a valid CSS color using the browser.
+	 *
+	 * @param {string} value Lowercased color candidate.
+	 * @return {string|false} The browser-resolved color or false.
+	 */
+	function browserDetectColor(value) {
+		var el = document.createElement('span');
+		el.style.color = '';
+		el.style.color = value;
+		return el.style.color !== '' ? value : false;
+	}
+
+	/**
+	 * Detect a color for a swatch value.
+	 *
+	 * Priority:
+	 * 1. Admin variation overrides (per-attribute)
+	 * 2. Built-in COLOR_MAP
+	 * 3. Browser CSS color detection
+	 * 4. false (not a color — render as text)
+	 *
+	 * @param {string} text       Original attribute text.
+	 * @param {Object} [overrides] Per-attribute admin color map.
+	 * @return {string|false} Hex/color string or false.
+	 */
+	function detectColor(text, overrides) {
+		var key = text.toLowerCase().trim();
+
+		// 1. Admin per-variation overrides — highest priority.
+		if (overrides && key in overrides) {
+			return overrides[key];
+		}
+
+		// 2. Built-in map.
+		if (key in COLOR_MAP) {
+			return COLOR_MAP[key];
+		}
+
+		// 3. Browser detection — catches any valid CSS color name.
+		var detected = browserDetectColor(key);
+		if (detected) {
+			return detected;
+		}
+
+		return false;
+	}
 
 
 	/* ====================================================================

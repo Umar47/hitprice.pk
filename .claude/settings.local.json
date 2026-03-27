@@ -13,7 +13,9 @@
       "Bash(mkdir -p \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public/wp-content/plugins/hitprice-content-engine/admin/views\")",
       "Bash(mkdir -p \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public/wp-content/plugins/hitprice-content-engine/admin/css\")",
       "Bash(mkdir -p \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public/wp-content/plugins/hitprice-content-engine/admin/js\")",
-      "Bash(mkdir -p \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public/wp-content/plugins/hitprice-content-engine/templates/prompts\")"
+      "Bash(mkdir -p \"C:/Users/Muhammad Umar/Local Sites/hit-price/app/public/wp-content/plugins/hitprice-content-engine/templates/prompts\")",
+      "Bash(grep -r \"variation\\\\|swatch\" 'C:\\\\Users\\\\Muhammad Umar\\\\Local Sites\\\\hit-price\\\\app\\\\public\\\\wp-content\\\\plugins' --include=*.php --include=*.js)",
+      "Bash(grep:*)"
     ]
   }
 }
