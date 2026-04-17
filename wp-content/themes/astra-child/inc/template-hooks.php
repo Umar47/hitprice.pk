@@ -20,8 +20,14 @@ function hitprice_register_template_hooks() {
 
 	if ( function_exists( 'astra_footer_markup' ) ) {
 		remove_action( 'astra_footer', 'astra_footer_markup' );
-		add_action( 'astra_footer', 'hitprice_render_site_footer' );
 	}
+
+	// Remove Astra builder footer when the header/footer builder is active.
+	if ( class_exists( 'Astra_Builder_Footer' ) ) {
+		remove_action( 'astra_footer', array( Astra_Builder_Footer::get_instance(), 'footer_markup' ), 10 );
+	}
+
+	add_action( 'astra_footer', 'hitprice_render_site_footer' );
 }
 add_action( 'wp', 'hitprice_register_template_hooks', 20 );
 

@@ -44,6 +44,14 @@ function hitprice_enqueue_child_assets() {
 			array( 'hitprice-header-footer' ),
 			filemtime( get_stylesheet_directory() . '/assets/css/front-page.css' )
 		);
+
+		wp_enqueue_script(
+			'hitprice-home-sliders',
+			get_stylesheet_directory_uri() . '/assets/js/home-sliders.js',
+			array(),
+			filemtime( get_stylesheet_directory() . '/assets/js/home-sliders.js' ),
+			true
+		);
 	}
 
 	if ( function_exists( 'is_product' ) && is_product() ) {
@@ -64,6 +72,23 @@ function hitprice_enqueue_child_assets() {
 			true
 		);
 
+	}
+
+	if ( function_exists( 'is_checkout' ) && is_checkout() ) {
+		wp_enqueue_style(
+			'hitprice-checkout',
+			get_stylesheet_directory_uri() . '/assets/css/checkout.css',
+			array( 'hitprice-header-footer' ),
+			filemtime( get_stylesheet_directory() . '/assets/css/checkout.css' )
+		);
+
+		wp_enqueue_script(
+			'hitprice-checkout',
+			get_stylesheet_directory_uri() . '/assets/js/checkout.js',
+			array(),
+			filemtime( get_stylesheet_directory() . '/assets/js/checkout.js' ),
+			true
+		);
 	}
 
 	if ( function_exists( 'is_woocommerce' ) && ( is_shop() || is_product_taxonomy() ) ) {
@@ -193,3 +218,12 @@ function hitprice_force_product_content_layout( $layout ) {
 	return $layout;
 }
 add_filter( 'astra_get_content_layout', 'hitprice_force_product_content_layout' );
+
+/**
+ * Always show the cart widget in the header flyout, even on cart/checkout pages.
+ *
+ * WooCommerce hides WC_Widget_Cart output on is_cart() and is_checkout() by default.
+ *
+ * @return bool
+ */
+add_filter( 'woocommerce_widget_cart_is_hidden', '__return_false' );

@@ -56,7 +56,8 @@ body.single-product .ast-primary-content,body.single-product .ast-woocommerce-co
 /* Responsive */
 @media(max-width:768px){
 .hp-product-layout{grid-template-columns:1fr;gap:24px 0;padding:16px 16px 0}
-.hp-product-layout .woocommerce-product-gallery{position:static}
+.hp-product-layout .woocommerce-product-gallery{position:static;grid-column:1}
+.hp-product-layout .summary.entry-summary{grid-column:1}
 .hp-gallery__img{max-height:420px}
 .hp-gallery__arrow{width:36px;height:36px}
 .hp-gallery__arrow--prev{left:8px}

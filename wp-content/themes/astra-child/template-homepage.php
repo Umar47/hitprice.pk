@@ -1,7 +1,14 @@
 <?php
 /**
  * Template Name: Hit Price Homepage
- * Custom homepage page template.
+ *
+ * Fixed 6-section homepage:
+ * 1. Hero Slider
+ * 2. Trust Strip
+ * 3. Hot Deals (product slider)
+ * 4. Latest Phones (product slider)
+ * 5. Shop By Category
+ * 6. Why Buy From Us
  *
  * @package HitPrice
  */
@@ -11,28 +18,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 get_header();
+
+$post_id = (int) get_the_ID();
 ?>
-<main id="primary" class="site-main hitprice-front-page">
+<main id="primary" class="site-main hp-home">
 	<?php
-	$home_sections = function_exists( 'hp_get_homepage_sections' ) ? hp_get_homepage_sections( get_the_ID() ) : array();
+	hitprice_get_template_part(
+		'template-parts/home/hero-slider',
+		array( 'slides' => hp_get_hero_slides( $post_id ) )
+	);
 
-	if ( ! empty( $home_sections ) ) :
-		foreach ( $home_sections as $section ) :
-			$layout   = isset( $section['acf_fc_layout'] ) ? $section['acf_fc_layout'] : '';
-			$template = function_exists( 'hp_get_homepage_section_template' ) ? hp_get_homepage_section_template( $layout ) : '';
+	hitprice_get_template_part(
+		'template-parts/home/trust-strip',
+		array( 'items' => hp_get_trust_strip_items( $post_id ) )
+	);
 
-			if ( $template ) {
-				hitprice_get_template_part( $template, $section );
-			}
-		endforeach;
-	else :
-		hitprice_get_template_part( 'template-parts/home/hero' );
-		hitprice_get_template_part( 'template-parts/home/categories' );
-		hitprice_get_template_part( 'template-parts/home/promo-grid' );
-		hitprice_get_template_part( 'template-parts/home/preview-tiles' );
-		hitprice_get_template_part( 'template-parts/home/featured-products' );
-		hitprice_get_template_part( 'template-parts/home/trust-strip' );
-	endif;
+	hitprice_get_template_part(
+		'template-parts/home/product-slider',
+		array_merge(
+			hp_get_hot_deals_data( $post_id ),
+			array( 'slider_id' => 'hot-deals' )
+		)
+	);
+
+	hitprice_get_template_part(
+		'template-parts/home/product-slider',
+		array_merge(
+			hp_get_latest_phones_data( $post_id ),
+			array( 'slider_id' => 'latest-phones' )
+		)
+	);
+
+	hitprice_get_template_part(
+		'template-parts/home/shop-categories',
+		hp_get_shop_categories_data( $post_id )
+	);
+
+	hitprice_get_template_part(
+		'template-parts/home/why-buy',
+		hp_get_why_buy_data( $post_id )
+	);
 	?>
 </main>
 <?php

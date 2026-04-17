@@ -114,10 +114,23 @@ Build a fast, clean, modern WooCommerce store focused on sales conversion.
 - Removed `woocommerce_template_single_meta` and `woocommerce_template_single_sharing` from summary
 - Removed default related products and upsells from after-summary area
 
+## Homepage v2 Rebuild (2026-04-16)
+- Dropped ACF flexible-content builder entirely; replaced with fixed 6-section layout matching the new Figma mockup
+- Replaced `hitprice-helper/inc/acf/homepage-fields.php` with a single tabbed ACF group (Hero Slider, Trust Strip, Hot Deals, Latest Phones, Shop By Category, Why Buy From Us) under the key `group_hp_homepage`
+- Rewrote `hitprice-helper/inc/homepage/homepage-data.php` with dedicated sanitized accessors: `hp_get_hero_slides`, `hp_get_trust_strip_items`, `hp_get_hot_deals_data`, `hp_get_latest_phones_data`, `hp_get_shop_categories_data`, `hp_get_why_buy_data`, plus shared `hp_get_product_slider_data( $prefix )`
+- Rewrote `template-homepage.php` to render 6 sections in fixed order; removed legacy static fallback chain
+- Created new template parts: `hero-slider.php`, `product-slider.php` (reusable, args-driven for both Hot Deals & Latest Phones), `shop-categories.php`, `why-buy.php`; rewrote `trust-strip.php` as image-only horizontal strip
+- Deleted obsolete partials: `hero.php`, `categories.php`, `promo-grid.php`, `preview-tiles.php`, `featured-products.php`, and entire `template-parts/home/flexible/` folder (8 files)
+- Rewrote `assets/css/front-page.css` from scratch — mobile-first, ~500 lines, new token system under `.hp-home` scope, shared `.hp-slider` base for hero + product sliders
+- Added `assets/js/home-sliders.js` — vanilla JS (no dependencies), scroll-snap based sliders with arrows + dots, keyboard support, debounced resize handling, per-slider state tracking
+- Hero slider: one slide per view, dot count = slide count, full-bleed background image with left-aligned content overlay and primary/secondary CTAs
+- Product slider: 1/2/4 cards per view at 320/640/900+ breakpoints, dots computed from `scrollWidth / clientWidth`, arrows disable at edges
+- Updated `inc/theme-setup.php` to enqueue `home-sliders.js` only on the homepage template (same guard as the stylesheet)
+
 ## Next Tasks
 - Activate the Astra child theme if not already active
-- Refine homepage copy, spacing, and section ordering after visual review
-- Activate the `hitprice-helper` plugin and populate homepage flexible sections in the WordPress editor
+- Create/assign the "Hit Price Homepage" page via Pages → Add New → Template → Hit Price Homepage
+- Populate ACF tabs (Hero Slider, Trust Strip, Hot Deals, Latest Phones, Shop By Category, Why Buy) with real content
 - Refine header design and spacing to match the premium ecommerce direction
 - Build the detailed footer design
 - Assign/create WordPress menus for header and footer
@@ -126,6 +139,13 @@ Build a fast, clean, modern WooCommerce store focused on sales conversion.
 - Review performance
 
 ## Important Decisions
+- Homepage v2 is a fixed 6-section layout (hero slider, trust strip, hot deals, latest phones, shop by category, why buy from us) — no flexible-content builder
+- Slider implementation is a single reusable vanilla JS module (`home-sliders.js`) using CSS scroll-snap + native overflow scrolling; no external libraries
+- Hero slider gets arrows + dots; product sliders get arrows + dots (dots auto-computed from scroll pages)
+- Product slider is one `product-slider.php` partial consumed by both Hot Deals and Latest Phones — passed args differ, template reuses
+- Trust strip is image-only (text inside image) per brand requirement; optional link URL per item
+- Shop by Category uses a custom ACF repeater (max 4 cards) with background image, not a taxonomy selector
+- Homepage CSS is scoped under `.hp-home` with local CSS variables to avoid collisions with Astra or header/footer styles
 - Theme-related presentation work goes in the child theme
 - Heavy or reusable logic belongs in `hitprice-helper`, not the theme
 - Header and footer must be split into separate template files following WordPress standards
@@ -168,20 +188,12 @@ Build a fast, clean, modern WooCommerce store focused on sales conversion.
 - `wp-content/themes/astra-child/assets/images/home/category-phone.jpg`
 - `wp-content/themes/astra-child/assets/js/header.js`
 - `wp-content/themes/astra-child/template-homepage.php`
-- `wp-content/themes/astra-child/template-parts/home/flexible/hero.php`
-- `wp-content/themes/astra-child/template-parts/home/flexible/featured-categories.php`
-- `wp-content/themes/astra-child/template-parts/home/flexible/product-block.php`
-- `wp-content/themes/astra-child/template-parts/home/flexible/promo-banner.php`
-- `wp-content/themes/astra-child/template-parts/home/flexible/usp.php`
-- `wp-content/themes/astra-child/template-parts/home/flexible/preview-tiles.php`
-- `wp-content/themes/astra-child/template-parts/home/flexible/campaign-tiles.php`
-- `wp-content/themes/astra-child/template-parts/home/flexible/trust.php`
-- `wp-content/themes/astra-child/template-parts/home/hero.php`
-- `wp-content/themes/astra-child/template-parts/home/categories.php`
-- `wp-content/themes/astra-child/template-parts/home/promo-grid.php`
-- `wp-content/themes/astra-child/template-parts/home/preview-tiles.php`
-- `wp-content/themes/astra-child/template-parts/home/featured-products.php`
-- `wp-content/themes/astra-child/template-parts/home/trust-strip.php`
+- `wp-content/themes/astra-child/template-parts/home/hero-slider.php` (new v2)
+- `wp-content/themes/astra-child/template-parts/home/product-slider.php` (new v2, reusable)
+- `wp-content/themes/astra-child/template-parts/home/shop-categories.php` (new v2)
+- `wp-content/themes/astra-child/template-parts/home/why-buy.php` (new v2)
+- `wp-content/themes/astra-child/template-parts/home/trust-strip.php` (rewritten v2)
+- `wp-content/themes/astra-child/assets/js/home-sliders.js` (new v2)
 - `wp-content/plugins/hitprice-helper/hitprice-helper.php`
 - `wp-content/plugins/hitprice-helper/inc/acf/homepage-fields.php`
 - `wp-content/plugins/hitprice-helper/inc/homepage/homepage-data.php`
