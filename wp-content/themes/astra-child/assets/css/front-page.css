@@ -265,17 +265,13 @@
 	padding-bottom: 16px;
 }
 
-.hp-slider--hero .hp-slider__track {
-	border-radius: var(--hp-radius-lg);
-	overflow: hidden;
-	box-shadow: var(--hp-shadow-lg);
-}
-
 .hp-hero__slide {
 	position: relative;
 	aspect-ratio: 16 / 9;
 	min-height: 260px;
 	overflow: hidden;
+	border-radius: var(--hp-radius-lg);
+	box-shadow: var(--hp-shadow-lg);
 }
 
 .hp-hero__media {
