@@ -1,0 +1,110 @@
+/**
+ * HitPrice — Bulk Specs Importer modal (admin)
+ */
+
+.hp-bulk-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 100050;
+	display: none;
+}
+
+.hp-bulk-modal.is-open {
+	display: block;
+}
+
+.hp-bulk-modal__backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.55);
+}
+
+.hp-bulk-modal__dialog {
+	position: relative;
+	background: #fff;
+	width: min(720px, calc(100% - 40px));
+	max-height: calc(100vh - 60px);
+	margin: 30px auto 0;
+	padding: 24px 28px 20px;
+	border-radius: 6px;
+	box-shadow: 0 18px 60px rgba(0, 0, 0, 0.3);
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	overflow: auto;
+}
+
+.hp-bulk-modal__close {
+	position: absolute;
+	top: 6px;
+	right: 10px;
+	border: 0;
+	background: transparent;
+	font-size: 26px;
+	line-height: 1;
+	color: #666;
+	cursor: pointer;
+	padding: 4px 8px;
+}
+
+.hp-bulk-modal__close:hover,
+.hp-bulk-modal__close:focus {
+	color: #000;
+	outline: none;
+}
+
+.hp-bulk-modal__title {
+	margin: 0;
+	font-size: 18px;
+	color: #1d2327;
+}
+
+.hp-bulk-modal__hint {
+	margin: 0;
+	font-size: 13px;
+	color: #50575e;
+}
+
+.hp-bulk-modal__textarea {
+	width: 100%;
+	min-height: 220px;
+	font-family: Menlo, Consolas, monospace;
+	font-size: 12px;
+	line-height: 1.5;
+	padding: 10px 12px;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	resize: vertical;
+	box-sizing: border-box;
+}
+
+.hp-bulk-modal__textarea:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: 2px solid transparent;
+}
+
+.hp-bulk-modal__status {
+	min-height: 18px;
+	font-size: 13px;
+	color: #50575e;
+}
+
+.hp-bulk-modal__status.is-error {
+	color: #b32d2e;
+}
+
+.hp-bulk-modal__status.is-success {
+	color: #007017;
+}
+
+.hp-bulk-modal__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
+/* "Add Bulk" trigger sits inline next to ACF "Add Section". */
+.hp-bulk-add {
+	margin-left: 6px !important;
+}

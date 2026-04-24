@@ -21,3 +21,7 @@ require_once HITPRICE_HELPER_PATH . 'inc/acf/swatch-fields.php';
 require_once HITPRICE_HELPER_PATH . 'inc/homepage/homepage-data.php';
 require_once HITPRICE_HELPER_PATH . 'inc/product/product-data.php';
 require_once HITPRICE_HELPER_PATH . 'inc/checkout/checkout-fields.php';
+
+if ( is_admin() ) {
+	require_once HITPRICE_HELPER_PATH . 'inc/admin/bulk-specs-importer.php';
+}

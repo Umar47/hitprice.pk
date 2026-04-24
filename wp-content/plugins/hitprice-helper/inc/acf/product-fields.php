@@ -83,7 +83,6 @@ function hp_register_product_acf_fields() {
 					'label'        => 'Detail Sections',
 					'name'         => 'hp_detail_specs',
 					'type'         => 'flexible_content',
-					'max'          => 10,
 					'button_label' => 'Add Section',
 					'layouts'      => array(
 						'layout_text_block'     => array(

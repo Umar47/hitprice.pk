@@ -127,6 +127,19 @@ Build a fast, clean, modern WooCommerce store focused on sales conversion.
 - Product slider: 1/2/4 cards per view at 320/640/900+ breakpoints, dots computed from `scrollWidth / clientWidth`, arrows disable at edges
 - Updated `inc/theme-setup.php` to enqueue `home-sliders.js` only on the homepage template (same guard as the stylesheet)
 
+## Bulk Specs Importer (2026-04-25)
+- Added an "Add Bulk" admin tool to speed up product spec data entry without changing the existing ACF structure or frontend rendering
+- Button is injected next to ACF "Add Section" on the `field_hp_detail_specs` flexible content field on product edit screens only
+- Opens a modal with a textarea for pasting competitor spec HTML; parsing runs entirely client-side (no server endpoint)
+- Each `.p-spec-table` block in the pasted HTML becomes a new `key_value_table` layout: `<h6>` populates the section heading, `<dt>/<dd>` pairs populate the inner rows repeater (label/value)
+- Uses ACF's official JS API (`acf.getField`, `field.add()`) — no ACF core files modified, no template overrides
+- Reuses the auto-created blank first row in each new section so there are no orphan empty rows
+- Dedupes by lowercased label within each pasted section, trims values, skips empty `<dt>`, handles missing `<dd>` gracefully
+- Shows imported section/row counts in the modal status line; ESC, backdrop click, X, and Cancel all close the modal
+- Assets enqueue only on `post.php`/`post-new.php` for the `product` post type, with capability gate (`edit_products`/`edit_posts`); cache-busted via `filemtime`
+- Used `__()` (not `esc_html__()`) for localized strings since jQuery `.text()` already escapes — fixes literal `&amp;` rendering for "Parse & Insert"
+- Removed the `'max' => 10` cap from `field_hp_detail_specs` flexible content so admins can add unlimited spec sections per product
+
 ## Next Tasks
 - Activate the Astra child theme if not already active
 - Create/assign the "Hit Price Homepage" page via Pages → Add New → Template → Hit Price Homepage
@@ -199,6 +212,10 @@ Build a fast, clean, modern WooCommerce store focused on sales conversion.
 - `wp-content/plugins/hitprice-helper/inc/homepage/homepage-data.php`
 - `wp-content/plugins/hitprice-helper/inc/product/product-data.php`
 - `wp-content/plugins/hitprice-helper/inc/acf/product-fields.php`
+- `wp-content/plugins/hitprice-helper/inc/admin/bulk-specs-importer.php` (new — bulk specs importer enqueue)
+- `wp-content/plugins/hitprice-helper/assets/js/admin-bulk-specs.js` (new — modal + parser + ACF JS API insertion)
+- `wp-content/plugins/hitprice-helper/assets/css/admin-bulk-specs.css` (new — modal styles)
+- `wp-content/plugins/hitprice-helper/hitprice-helper.php` (admin-only require for bulk specs importer)
 - `wp-content/themes/astra-child/template-parts/product/compare.php`
 - `wp-content/themes/astra-child/template-parts/product/features.php`
 - `wp-content/themes/astra-child/template-parts/product/accordions.php`
