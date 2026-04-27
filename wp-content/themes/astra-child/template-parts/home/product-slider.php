@@ -17,13 +17,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$args      = hitprice_get_template_args();
-$products  = isset( $args['products'] ) && is_array( $args['products'] ) ? $args['products'] : array();
-$title     = isset( $args['title'] ) ? (string) $args['title'] : '';
-$subtitle  = isset( $args['subtitle'] ) ? (string) $args['subtitle'] : '';
-$cta_label = isset( $args['cta_label'] ) ? (string) $args['cta_label'] : '';
-$cta_url   = isset( $args['cta_url'] ) ? (string) $args['cta_url'] : '';
-$slider_key = isset( $args['slider_id'] ) ? sanitize_html_class( (string) $args['slider_id'] ) : 'products';
+$args           = hitprice_get_template_args();
+$products       = isset( $args['products'] ) && is_array( $args['products'] ) ? $args['products'] : array();
+$title          = isset( $args['title'] ) ? (string) $args['title'] : '';
+$subtitle       = isset( $args['subtitle'] ) ? (string) $args['subtitle'] : '';
+$cta_label      = isset( $args['cta_label'] ) ? (string) $args['cta_label'] : '';
+$cta_url        = isset( $args['cta_url'] ) ? (string) $args['cta_url'] : '';
+$slider_key     = isset( $args['slider_id'] ) ? sanitize_html_class( (string) $args['slider_id'] ) : 'products';
+$autoplay       = ! empty( $args['autoplay'] );
+$autoplay_speed = isset( $args['autoplay_speed'] ) ? max( 2, (int) $args['autoplay_speed'] ) : 5;
 
 if ( empty( $products ) ) {
 	return;
@@ -57,6 +59,10 @@ $is_single     = count( $products ) === 1;
 	<div
 		class="hp-slider hp-slider--products<?php echo $is_single ? ' is-single' : ''; ?>"
 		data-hp-slider="products"
+		<?php if ( $autoplay && ! $is_single ) : ?>
+			data-hp-autoplay="1"
+			data-hp-autoplay-speed="<?php echo esc_attr( (string) ( $autoplay_speed * 1000 ) ); ?>"
+		<?php endif; ?>
 		aria-roledescription="carousel"
 		<?php if ( $title ) : ?>aria-label="<?php echo esc_attr( $title ); ?>"<?php endif; ?>
 	>

@@ -127,6 +127,22 @@ Build a fast, clean, modern WooCommerce store focused on sales conversion.
 - Product slider: 1/2/4 cards per view at 320/640/900+ breakpoints, dots computed from `scrollWidth / clientWidth`, arrows disable at edges
 - Updated `inc/theme-setup.php` to enqueue `home-sliders.js` only on the homepage template (same guard as the stylesheet)
 
+## Hero Slider Mobile Image Field (2026-04-28)
+- Added a per-slide optional `Background Image (Mobile)` ACF field (`field_hp_hero_slide_background_mobile`) inside the hero slides repeater; the existing desktop image is now labeled `Background Image (Desktop)`
+- `hp_get_hero_slides()` normalizes the mobile image as `background_image_mobile` (or `null` when absent)
+- `template-parts/home/hero-slider.php` now renders a `<picture>` element with a `<source media="(max-width: 639px)">` for the mobile image and the desktop `<img>` as fallback — preserves `alt`, `loading`, `decoding`, and `fetchpriority` so the LCP image still hints correctly per viewport
+- Mobile breakpoint is `≤ 639px` to align with the existing `@media (min-width: 640px)` breakpoint in `front-page.css`
+- No CSS change needed — `<picture>`/`<img>` with `object-fit: cover` works the same as before
+
+## Homepage Slider Fixes & Autoplay Controls (2026-04-28)
+- Fixed clipped/abrupt drop shadow under the hero slider: shadow now lives on `.hp-slider--hero .hp-slider__viewport` (the viewport's own outward shadow is not clipped by its own overflow) instead of the inner slide; viewport padding/margin reset to `0` for hero, border-radius moved up to the viewport, and inner `.hp-hero__slide` border-radius/shadow cleared so the rounded clip + smooth shadow render evenly on all four sides
+- Bumped `.hp-hero` bottom padding from `16px` to `40px` so the shadow has clearance before the next section and the dots sit cleanly below
+- Fixed autoplay-stuck bug: `template-parts/home/hero-slider.php` now pre-filters slides without a valid background image before rendering, so the dots loop and `is_single` check both reflect the actual slide count (previously a phantom dot for an image-less slide caused `(current + 1) % 1 === 0` and the slider never advanced)
+- Added per-slider autoplay controls in ACF on the `Hit Price Homepage` template: each slider (Hero Slider, Hot Deals, Latest Phones) now has its own `Enable Autoplay` toggle and a conditional `Autoplay Speed (seconds)` number field (clamped 2–30s; hero default ON @ 7s, product sliders default OFF @ 5s)
+- New `hp_normalize_autoplay_speed()` and `hp_get_hero_section_data()` helpers in `homepage-data.php`; `hp_get_product_slider_data()` now also returns `autoplay` + `autoplay_speed`
+- Hero and product slider templates emit `data-hp-autoplay="1"` and `data-hp-autoplay-speed="<ms>"` on the slider root only when autoplay is enabled and there is more than one slide/page
+- Rewrote the autoplay block in `home-sliders.js` as a generic `setupAutoplay()` that runs for any slider type (hero or products) when the data attributes are present; reads delay per-slider; restarts the timer on manual arrow/dot clicks so a click is not immediately followed by an auto-advance; safely no-ops when there is only one page
+
 ## Bulk Specs Importer (2026-04-25)
 - Added an "Add Bulk" admin tool to speed up product spec data entry without changing the existing ACF structure or frontend rendering
 - Button is injected next to ACF "Add Section" on the `field_hp_detail_specs` flexible content field on product edit screens only
@@ -155,6 +171,8 @@ Build a fast, clean, modern WooCommerce store focused on sales conversion.
 - Homepage v2 is a fixed 6-section layout (hero slider, trust strip, hot deals, latest phones, shop by category, why buy from us) — no flexible-content builder
 - Slider implementation is a single reusable vanilla JS module (`home-sliders.js`) using CSS scroll-snap + native overflow scrolling; no external libraries
 - Hero slider gets arrows + dots; product sliders get arrows + dots (dots auto-computed from scroll pages)
+- Per-slider autoplay is opt-in via ACF (`*_autoplay_enabled`) with a per-slider speed (`*_autoplay_speed`, 2–30s); JS reads `data-hp-autoplay` / `data-hp-autoplay-speed` from the slider root rather than a hardcoded constant
+- Hero shadow lives on the viewport (`.hp-slider--hero .hp-slider__viewport`), not on the inner slide, so it is not clipped by viewport `overflow-x: auto`
 - Product slider is one `product-slider.php` partial consumed by both Hot Deals and Latest Phones — passed args differ, template reuses
 - Trust strip is image-only (text inside image) per brand requirement; optional link URL per item
 - Shop by Category uses a custom ACF repeater (max 4 cards) with background image, not a taxonomy selector

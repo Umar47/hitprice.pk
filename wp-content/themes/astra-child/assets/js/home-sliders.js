@@ -1,8 +1,8 @@
 /**
  * Hit Price homepage sliders.
  *
- * Hero slider (one slide per view, autoplay, pause on hover/focus)
- * and product sliders (multi-item snap, arrows + dots).
+ * Hero + product sliders. Each can opt-in to autoplay via
+ * data-hp-autoplay="1" data-hp-autoplay-speed="<ms>" on the slider root.
  * Vanilla JS, no deps.
  */
 
@@ -10,7 +10,8 @@
 	'use strict';
 
 	var SELECTOR = '[data-hp-slider]';
-	var HERO_AUTOPLAY_DELAY = 6000;
+	var DEFAULT_AUTOPLAY_DELAY = 7000;
+	var MIN_AUTOPLAY_DELAY = 2000;
 
 	/**
 	 * Step = distance between two adjacent slide starts.
@@ -168,14 +169,81 @@
 	}
 
 	/**
-	 * Advance hero to the next slide, wrap around.
+	 * Advance to the next page, wrap around.
 	 */
-	function advanceHero(slider) {
-		var current = getActivePage(slider);
+	function advanceAuto(slider) {
 		var total = getPageCount(slider);
+		if (total <= 1) return;
+
+		var current = getActivePage(slider);
 		var nextIndex = (current + 1) % total;
 
 		scrollToPage(slider, nextIndex);
+	}
+
+	/**
+	 * Read autoplay config from slider element.
+	 * Returns null when autoplay is not enabled.
+	 */
+	function getAutoplayConfig(slider) {
+		if (slider.getAttribute('data-hp-autoplay') !== '1') return null;
+
+		var raw = parseInt(slider.getAttribute('data-hp-autoplay-speed'), 10);
+		var delay = isNaN(raw) ? DEFAULT_AUTOPLAY_DELAY : Math.max(MIN_AUTOPLAY_DELAY, raw);
+
+		return { delay: delay };
+	}
+
+	/**
+	 * Wire up autoplay for a slider. Pauses on hover, focus, and tab hidden.
+	 * Restarts (resets timer) on user nav clicks so a manual click is not
+	 * immediately followed by an auto-advance.
+	 */
+	function setupAutoplay(slider, prev, next, dotsContainer) {
+		var config = getAutoplayConfig(slider);
+		if (!config) return;
+
+		var timer = null;
+		var paused = false;
+
+		function start() {
+			if (paused) return;
+			if (getPageCount(slider) <= 1) return;
+			stop();
+			timer = setInterval(function () {
+				if (document.hidden) return;
+				advanceAuto(slider);
+			}, config.delay);
+		}
+		function stop() {
+			if (timer) {
+				clearInterval(timer);
+				timer = null;
+			}
+		}
+		function restart() {
+			stop();
+			start();
+		}
+
+		slider.addEventListener('mouseenter', function () { paused = true; stop(); });
+		slider.addEventListener('mouseleave', function () { paused = false; start(); });
+		slider.addEventListener('focusin', function () { paused = true; stop(); });
+		slider.addEventListener('focusout', function () { paused = false; start(); });
+
+		if (prev) prev.addEventListener('click', restart);
+		if (next) next.addEventListener('click', restart);
+		if (dotsContainer) dotsContainer.addEventListener('click', restart);
+
+		document.addEventListener('visibilitychange', function () {
+			if (document.hidden) {
+				stop();
+			} else if (!paused) {
+				start();
+			}
+		});
+
+		start();
 	}
 
 	/**
@@ -205,7 +273,6 @@
 		var prev = slider.querySelector('[data-hp-slider-prev]');
 		var next = slider.querySelector('[data-hp-slider-next]');
 		var dotsContainer = slider.querySelector('[data-hp-slider-dots]');
-		var type = slider.getAttribute('data-hp-slider');
 
 		buildProductDots(slider);
 		updateState(slider);
@@ -267,41 +334,7 @@
 			updateState(slider);
 		}
 
-		// Hero: autoplay with pause on hover / focus-within / tab hidden.
-		if (type === 'hero') {
-			var timer = null;
-			var paused = false;
-
-			function start() {
-				if (paused) return;
-				stop();
-				timer = setInterval(function () {
-					if (document.hidden) return;
-					advanceHero(slider);
-				}, HERO_AUTOPLAY_DELAY);
-			}
-			function stop() {
-				if (timer) {
-					clearInterval(timer);
-					timer = null;
-				}
-			}
-
-			slider.addEventListener('mouseenter', function () { paused = true; stop(); });
-			slider.addEventListener('mouseleave', function () { paused = false; start(); });
-			slider.addEventListener('focusin', function () { paused = true; stop(); });
-			slider.addEventListener('focusout', function () { paused = false; start(); });
-
-			document.addEventListener('visibilitychange', function () {
-				if (document.hidden) {
-					stop();
-				} else if (!paused) {
-					start();
-				}
-			});
-
-			start();
-		}
+		setupAutoplay(slider, prev, next, dotsContainer);
 	}
 
 	var onResize = debounce(function () {

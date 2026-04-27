@@ -69,6 +69,35 @@ function hp_get_homepage_hero_fields() {
 			'placement' => 'top',
 		),
 		array(
+			'key'           => 'field_hp_hero_autoplay_enabled',
+			'label'         => 'Enable Autoplay',
+			'name'          => 'hero_autoplay_enabled',
+			'type'          => 'true_false',
+			'ui'            => 1,
+			'default_value' => 1,
+		),
+		array(
+			'key'               => 'field_hp_hero_autoplay_speed',
+			'label'             => 'Autoplay Speed (seconds)',
+			'name'              => 'hero_autoplay_speed',
+			'type'              => 'number',
+			'default_value'     => 7,
+			'min'               => 2,
+			'max'               => 30,
+			'step'              => 1,
+			'append'            => 's',
+			'instructions'      => 'Time each slide stays visible before advancing.',
+			'conditional_logic' => array(
+				array(
+					array(
+						'field'    => 'field_hp_hero_autoplay_enabled',
+						'operator' => '==',
+						'value'    => '1',
+					),
+				),
+			),
+		),
+		array(
 			'key'          => 'field_hp_hero_slides',
 			'label'        => 'Hero Slides',
 			'name'         => 'hero_slides',
@@ -79,12 +108,22 @@ function hp_get_homepage_hero_fields() {
 			'sub_fields'   => array(
 				array(
 					'key'           => 'field_hp_hero_slide_background',
-					'label'         => 'Background Image',
+					'label'         => 'Background Image (Desktop)',
 					'name'          => 'background_image',
 					'type'          => 'image',
 					'return_format' => 'array',
 					'preview_size'  => 'medium',
 					'required'      => 1,
+					'instructions'  => 'Used on screens 640px wide and up.',
+				),
+				array(
+					'key'           => 'field_hp_hero_slide_background_mobile',
+					'label'         => 'Background Image (Mobile)',
+					'name'          => 'background_image_mobile',
+					'type'          => 'image',
+					'return_format' => 'array',
+					'preview_size'  => 'medium',
+					'instructions'  => 'Optional. Used on screens narrower than 640px. Falls back to the desktop image if empty.',
 				),
 				array(
 					'key'   => 'field_hp_hero_slide_heading',
@@ -191,6 +230,35 @@ function hp_get_homepage_hot_deals_fields() {
 			'placement' => 'top',
 		),
 		array(
+			'key'           => 'field_hp_hot_deals_autoplay_enabled',
+			'label'         => 'Enable Autoplay',
+			'name'          => 'hot_deals_autoplay_enabled',
+			'type'          => 'true_false',
+			'ui'            => 1,
+			'default_value' => 0,
+		),
+		array(
+			'key'               => 'field_hp_hot_deals_autoplay_speed',
+			'label'             => 'Autoplay Speed (seconds)',
+			'name'              => 'hot_deals_autoplay_speed',
+			'type'              => 'number',
+			'default_value'     => 5,
+			'min'               => 2,
+			'max'               => 30,
+			'step'              => 1,
+			'append'            => 's',
+			'instructions'      => 'Time each page of products stays visible before advancing.',
+			'conditional_logic' => array(
+				array(
+					array(
+						'field'    => 'field_hp_hot_deals_autoplay_enabled',
+						'operator' => '==',
+						'value'    => '1',
+					),
+				),
+			),
+		),
+		array(
 			'key'           => 'field_hp_hot_deals_title',
 			'label'         => 'Section Title',
 			'name'          => 'hot_deals_title',
@@ -241,6 +309,35 @@ function hp_get_homepage_latest_phones_fields() {
 			'label'     => 'Latest Phones',
 			'type'      => 'tab',
 			'placement' => 'top',
+		),
+		array(
+			'key'           => 'field_hp_latest_phones_autoplay_enabled',
+			'label'         => 'Enable Autoplay',
+			'name'          => 'latest_phones_autoplay_enabled',
+			'type'          => 'true_false',
+			'ui'            => 1,
+			'default_value' => 0,
+		),
+		array(
+			'key'               => 'field_hp_latest_phones_autoplay_speed',
+			'label'             => 'Autoplay Speed (seconds)',
+			'name'              => 'latest_phones_autoplay_speed',
+			'type'              => 'number',
+			'default_value'     => 5,
+			'min'               => 2,
+			'max'               => 30,
+			'step'              => 1,
+			'append'            => 's',
+			'instructions'      => 'Time each page of products stays visible before advancing.',
+			'conditional_logic' => array(
+				array(
+					array(
+						'field'    => 'field_hp_latest_phones_autoplay_enabled',
+						'operator' => '==',
+						'value'    => '1',
+					),
+				),
+			),
 		),
 		array(
 			'key'           => 'field_hp_latest_phones_title',

@@ -43,6 +43,26 @@ function hp_home_field( $name, $post_id = 0, $default = null ) {
 }
 
 /**
+ * Clamp autoplay speed (seconds) to a sane range.
+ *
+ * @param mixed $value Raw field value.
+ * @param int   $default Fallback in seconds.
+ * @return int
+ */
+function hp_normalize_autoplay_speed( $value, $default = 7 ) {
+	$seconds = (int) $value;
+
+	if ( $seconds < 2 ) {
+		$seconds = $default;
+	}
+	if ( $seconds > 30 ) {
+		$seconds = 30;
+	}
+
+	return $seconds;
+}
+
+/**
  * Get hero slides.
  *
  * @param int $post_id Post id.
@@ -62,19 +82,38 @@ function hp_get_hero_slides( $post_id = 0 ) {
 			continue;
 		}
 
+		$mobile_image = isset( $slide['background_image_mobile'] ) && is_array( $slide['background_image_mobile'] ) && ! empty( $slide['background_image_mobile']['url'] )
+			? $slide['background_image_mobile']
+			: null;
+
 		$normalized[] = array(
-			'background_image' => $slide['background_image'],
-			'heading'          => isset( $slide['heading'] ) ? (string) $slide['heading'] : '',
-			'subheading'       => isset( $slide['subheading'] ) ? (string) $slide['subheading'] : '',
-			'offer_text'       => isset( $slide['offer_text'] ) ? (string) $slide['offer_text'] : '',
-			'cta1_label'       => isset( $slide['cta1_label'] ) ? (string) $slide['cta1_label'] : '',
-			'cta1_url'         => isset( $slide['cta1_url'] ) ? (string) $slide['cta1_url'] : '',
-			'cta2_label'       => isset( $slide['cta2_label'] ) ? (string) $slide['cta2_label'] : '',
-			'cta2_url'         => isset( $slide['cta2_url'] ) ? (string) $slide['cta2_url'] : '',
+			'background_image'        => $slide['background_image'],
+			'background_image_mobile' => $mobile_image,
+			'heading'                 => isset( $slide['heading'] ) ? (string) $slide['heading'] : '',
+			'subheading'              => isset( $slide['subheading'] ) ? (string) $slide['subheading'] : '',
+			'offer_text'              => isset( $slide['offer_text'] ) ? (string) $slide['offer_text'] : '',
+			'cta1_label'              => isset( $slide['cta1_label'] ) ? (string) $slide['cta1_label'] : '',
+			'cta1_url'                => isset( $slide['cta1_url'] ) ? (string) $slide['cta1_url'] : '',
+			'cta2_label'              => isset( $slide['cta2_label'] ) ? (string) $slide['cta2_label'] : '',
+			'cta2_url'                => isset( $slide['cta2_url'] ) ? (string) $slide['cta2_url'] : '',
 		);
 	}
 
 	return $normalized;
+}
+
+/**
+ * Get hero section data including autoplay settings.
+ *
+ * @param int $post_id Post id.
+ * @return array
+ */
+function hp_get_hero_section_data( $post_id = 0 ) {
+	return array(
+		'slides'         => hp_get_hero_slides( $post_id ),
+		'autoplay'       => (bool) hp_home_field( 'hero_autoplay_enabled', $post_id, true ),
+		'autoplay_speed' => hp_normalize_autoplay_speed( hp_home_field( 'hero_autoplay_speed', $post_id, 7 ), 7 ),
+	);
 }
 
 /**
@@ -116,11 +155,13 @@ function hp_get_trust_strip_items( $post_id = 0 ) {
 function hp_get_product_slider_data( $prefix, $post_id = 0 ) {
 	$prefix = sanitize_key( $prefix );
 
-	$title     = hp_home_field( $prefix . '_title', $post_id, '' );
-	$subtitle  = hp_home_field( $prefix . '_subtitle', $post_id, '' );
+	$title       = hp_home_field( $prefix . '_title', $post_id, '' );
+	$subtitle    = hp_home_field( $prefix . '_subtitle', $post_id, '' );
 	$product_ids = hp_home_field( $prefix . '_products', $post_id, array() );
-	$cta_label = hp_home_field( $prefix . '_cta_label', $post_id, '' );
-	$cta_url   = hp_home_field( $prefix . '_cta_url', $post_id, '' );
+	$cta_label   = hp_home_field( $prefix . '_cta_label', $post_id, '' );
+	$cta_url     = hp_home_field( $prefix . '_cta_url', $post_id, '' );
+	$autoplay    = (bool) hp_home_field( $prefix . '_autoplay_enabled', $post_id, false );
+	$speed       = hp_normalize_autoplay_speed( hp_home_field( $prefix . '_autoplay_speed', $post_id, 5 ), 5 );
 
 	$product_ids = is_array( $product_ids ) ? array_filter( array_map( 'absint', $product_ids ) ) : array();
 	$products    = array();
@@ -136,11 +177,13 @@ function hp_get_product_slider_data( $prefix, $post_id = 0 ) {
 	}
 
 	return array(
-		'title'     => (string) $title,
-		'subtitle'  => (string) $subtitle,
-		'products'  => $products,
-		'cta_label' => (string) $cta_label,
-		'cta_url'   => (string) $cta_url,
+		'title'          => (string) $title,
+		'subtitle'       => (string) $subtitle,
+		'products'       => $products,
+		'cta_label'      => (string) $cta_label,
+		'cta_url'        => (string) $cta_url,
+		'autoplay'       => $autoplay,
+		'autoplay_speed' => $speed,
 	);
 }
 

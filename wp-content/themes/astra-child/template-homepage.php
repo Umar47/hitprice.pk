@@ -25,7 +25,7 @@ $post_id = (int) get_the_ID();
 	<?php
 	hitprice_get_template_part(
 		'template-parts/home/hero-slider',
-		array( 'slides' => hp_get_hero_slides( $post_id ) )
+		hp_get_hero_section_data( $post_id )
 	);
 
 	hitprice_get_template_part(

@@ -9,8 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$args   = hitprice_get_template_args();
-$slides = isset( $args['slides'] ) && is_array( $args['slides'] ) ? $args['slides'] : array();
+$args           = hitprice_get_template_args();
+$slides         = isset( $args['slides'] ) && is_array( $args['slides'] ) ? $args['slides'] : array();
+$autoplay       = ! empty( $args['autoplay'] );
+$autoplay_speed = isset( $args['autoplay_speed'] ) ? max( 2, (int) $args['autoplay_speed'] ) : 7;
 
 if ( empty( $slides ) ) {
 	return;
@@ -23,6 +25,10 @@ $is_single = count( $slides ) === 1;
 	<div
 		class="hp-slider hp-slider--hero<?php echo $is_single ? ' is-single' : ''; ?>"
 		data-hp-slider="hero"
+		<?php if ( $autoplay && ! $is_single ) : ?>
+			data-hp-autoplay="1"
+			data-hp-autoplay-speed="<?php echo esc_attr( (string) ( $autoplay_speed * 1000 ) ); ?>"
+		<?php endif; ?>
 		aria-roledescription="carousel"
 		aria-label="<?php esc_attr_e( 'Homepage highlights', 'hitprice' ); ?>"
 	>
@@ -30,14 +36,16 @@ $is_single = count( $slides ) === 1;
 			<ul class="hp-slider__track" role="list">
 				<?php foreach ( $slides as $index => $slide ) : ?>
 					<?php
-					$image = $slide['background_image'];
+					$image     = $slide['background_image'];
 					$image_url = is_array( $image ) && ! empty( $image['url'] ) ? $image['url'] : '';
-					$image_alt = is_array( $image ) && ! empty( $image['alt'] ) ? $image['alt'] : ( $slide['heading'] ?: __( 'Hero slide', 'hitprice' ) );
-					$image_src_set = is_array( $image ) && ! empty( $image['sizes'] ) ? $image['sizes'] : array();
 
 					if ( ! $image_url ) {
 						continue;
 					}
+
+					$image_alt    = is_array( $image ) && ! empty( $image['alt'] ) ? $image['alt'] : ( $slide['heading'] ?: __( 'Hero slide', 'hitprice' ) );
+					$mobile       = isset( $slide['background_image_mobile'] ) && is_array( $slide['background_image_mobile'] ) ? $slide['background_image_mobile'] : null;
+					$mobile_url   = $mobile && ! empty( $mobile['url'] ) ? $mobile['url'] : '';
 					?>
 					<li
 						class="hp-slider__slide hp-hero__slide"
@@ -46,13 +54,18 @@ $is_single = count( $slides ) === 1;
 						aria-label="<?php echo esc_attr( sprintf( /* translators: 1: current slide, 2: total slides */ __( '%1$d of %2$d', 'hitprice' ), $index + 1, count( $slides ) ) ); ?>"
 					>
 						<div class="hp-hero__media">
-							<img
-								src="<?php echo esc_url( $image_url ); ?>"
-								alt="<?php echo esc_attr( $image_alt ); ?>"
-								loading="<?php echo 0 === $index ? 'eager' : 'lazy'; ?>"
-								decoding="async"
-								<?php if ( 0 === $index ) : ?>fetchpriority="high"<?php endif; ?>
-							>
+							<picture>
+								<?php if ( $mobile_url ) : ?>
+									<source media="(max-width: 639px)" srcset="<?php echo esc_url( $mobile_url ); ?>">
+								<?php endif; ?>
+								<img
+									src="<?php echo esc_url( $image_url ); ?>"
+									alt="<?php echo esc_attr( $image_alt ); ?>"
+									loading="<?php echo 0 === $index ? 'eager' : 'lazy'; ?>"
+									decoding="async"
+									<?php if ( 0 === $index ) : ?>fetchpriority="high"<?php endif; ?>
+								>
+							</picture>
 						</div>
 
 						<?php if ( $slide['heading'] || $slide['subheading'] || $slide['offer_text'] || $slide['cta1_label'] || $slide['cta2_label'] ) : ?>

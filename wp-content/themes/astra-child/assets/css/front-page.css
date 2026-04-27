@@ -160,8 +160,8 @@
 .hp-slider__viewport {
 	overflow-x: auto;
 	overflow-y: hidden;
-	padding: 24px 20px 36px;
-	margin: -24px -20px -36px;
+	padding: 16px 16px 24px;
+	margin: -16px -16px -24px;
 	scroll-snap-type: x mandatory;
 	scroll-behavior: smooth;
 	-webkit-overflow-scrolling: touch;
@@ -262,7 +262,14 @@
 
 .hp-hero {
 	padding-top: 16px;
-	padding-bottom: 16px;
+	padding-bottom: 40px;
+}
+
+.hp-slider--hero .hp-slider__viewport {
+	padding: 0;
+	margin: 0;
+	border-radius: var(--hp-radius-lg);
+	box-shadow: 0 4px 10px rgba(13, 22, 48, 0.06), 0 18px 32px rgba(13, 22, 48, 0.14);
 }
 
 .hp-hero__slide {
@@ -270,8 +277,8 @@
 	aspect-ratio: 16 / 9;
 	min-height: 260px;
 	overflow: hidden;
-	border-radius: var(--hp-radius-lg);
-	box-shadow: var(--hp-shadow-lg);
+	border-radius: 0;
+	box-shadow: none;
 }
 
 .hp-hero__media {
