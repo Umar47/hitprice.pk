@@ -22,6 +22,14 @@ require_once HITPRICE_HELPER_PATH . 'inc/homepage/homepage-data.php';
 require_once HITPRICE_HELPER_PATH . 'inc/product/product-data.php';
 require_once HITPRICE_HELPER_PATH . 'inc/checkout/checkout-fields.php';
 
+require_once HITPRICE_HELPER_PATH . 'inc/search/search-install.php';
+require_once HITPRICE_HELPER_PATH . 'inc/search/search-analytics.php';
+require_once HITPRICE_HELPER_PATH . 'inc/search/search-query.php';
+require_once HITPRICE_HELPER_PATH . 'inc/search/search-rest.php';
+
+register_activation_hook( __FILE__, 'hp_search_activate' );
+
 if ( is_admin() ) {
 	require_once HITPRICE_HELPER_PATH . 'inc/admin/bulk-specs-importer.php';
+	require_once HITPRICE_HELPER_PATH . 'inc/admin/search-admin.php';
 }

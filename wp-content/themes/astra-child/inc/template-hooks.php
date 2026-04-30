@@ -87,6 +87,14 @@ function hitprice_register_product_hooks() {
 add_action( 'wp', 'hitprice_register_product_hooks', 20 );
 
 /**
+ * Render the live search overlay shell in the footer (once per page).
+ */
+function hitprice_render_search_overlay() {
+	hitprice_get_template_part( 'template-parts/search/overlay' );
+}
+add_action( 'wp_footer', 'hitprice_render_search_overlay', 5 );
+
+/**
  * Capture product tabs data for accordion rendering, then suppress default tab output.
  *
  * @param array $tabs Product tabs.

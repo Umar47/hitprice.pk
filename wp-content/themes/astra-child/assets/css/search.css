@@ -1,0 +1,429 @@
+/* ==========================================================================
+   Hit Price live search overlay
+   Mobile-first, scoped under .hp-search-overlay
+   ========================================================================== */
+
+.hp-search-overlay,
+.hp-search-overlay * {
+	box-sizing: border-box;
+}
+
+.hp-search-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 99999;
+	display: none;
+	font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	color: #1a1a1a;
+}
+
+.hp-search-overlay[aria-hidden="false"],
+.hp-search-overlay.hp-search-is-open {
+	display: block;
+}
+
+.hp-search-overlay__backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(15, 23, 42, 0.55);
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(2px);
+	opacity: 0;
+	transition: opacity 180ms ease;
+}
+
+.hp-search-overlay[aria-hidden="false"] .hp-search-overlay__backdrop {
+	opacity: 1;
+}
+
+/* Panel — full screen on mobile */
+.hp-search-overlay__panel {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	background: #ffffff;
+	transform: translateY(8px);
+	opacity: 0;
+	transition: transform 220ms ease, opacity 180ms ease;
+	height: 100dvh;
+	max-height: 100dvh;
+}
+
+.hp-search-overlay[aria-hidden="false"] .hp-search-overlay__panel {
+	transform: translateY(0);
+	opacity: 1;
+}
+
+/* Top form bar */
+.hp-search-overlay__form {
+	position: sticky;
+	top: 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 12px;
+	background: #ffffff;
+	border-bottom: 1px solid #e6e8eb;
+	z-index: 2;
+}
+
+.hp-search-overlay__back {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: #1a1a1a;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.hp-search-overlay__back:hover,
+.hp-search-overlay__back:focus-visible {
+	background: #f1f3f5;
+	outline: none;
+}
+
+.hp-search-overlay__input {
+	flex: 1 1 auto;
+	min-width: 0;
+	height: 44px;
+	padding: 0 14px;
+	font-size: 16px; /* keeps iOS from zooming */
+	line-height: 1.4;
+	color: #1a1a1a;
+	background: #f6f7f9;
+	border: 1px solid #e6e8eb;
+	border-radius: 10px;
+	font-family: inherit;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.hp-search-overlay__input:focus {
+	outline: none;
+	border-color: #0053e2;
+	background: #ffffff;
+	box-shadow: 0 0 0 3px rgba(0, 83, 226, 0.18);
+}
+
+.hp-search-overlay__input::-webkit-search-cancel-button,
+.hp-search-overlay__input::-webkit-search-decoration {
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.hp-search-overlay__clear {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: #6b7280;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.hp-search-overlay__clear:hover,
+.hp-search-overlay__clear:focus-visible {
+	background: #f1f3f5;
+	color: #1a1a1a;
+	outline: none;
+}
+
+.hp-search-overlay__cancel {
+	flex: 0 0 auto;
+	padding: 8px 4px;
+	background: transparent;
+	border: 0;
+	color: #0053e2;
+	font-size: 15px;
+	font-weight: 500;
+	cursor: pointer;
+	font-family: inherit;
+}
+
+.hp-search-overlay__cancel:hover {
+	text-decoration: underline;
+}
+
+/* Body */
+.hp-search-overlay__body {
+	flex: 1 1 auto;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior: contain;
+	padding: 16px 12px 32px;
+}
+
+.hp-search-overlay__heading {
+	font-family: 'Poppins', system-ui, sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: #6b7280;
+	margin: 0 0 10px;
+}
+
+/* Chips for trending + term suggestions */
+.hp-search-overlay__chips {
+	list-style: none;
+	margin: 0 0 22px;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.hp-search-overlay__chips li {
+	margin: 0;
+	padding: 0;
+}
+
+.hp-search-overlay__chip {
+	display: inline-flex;
+	align-items: center;
+	min-height: 36px;
+	padding: 6px 14px;
+	background: #f1f3f5;
+	color: #1a1a1a;
+	border: 1px solid transparent;
+	border-radius: 999px;
+	font-size: 14px;
+	line-height: 1.2;
+	cursor: pointer;
+	font-family: inherit;
+	transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.hp-search-overlay__chip:hover {
+	background: #e6eefb;
+	border-color: #0053e2;
+}
+
+.hp-search-overlay__chip:focus-visible {
+	outline: 2px solid #0053e2;
+	outline-offset: 2px;
+}
+
+/* Product list */
+.hp-search-overlay__product-list {
+	list-style: none;
+	margin: 0 -8px 12px;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.hp-search-overlay__product {
+	display: grid;
+	grid-template-columns: 56px 1fr auto;
+	gap: 12px;
+	align-items: center;
+	padding: 10px 8px;
+	min-height: 72px;
+	color: inherit;
+	text-decoration: none;
+	border-radius: 10px;
+	transition: background-color 120ms ease;
+}
+
+.hp-search-overlay__product:hover,
+.hp-search-overlay__product:focus-visible,
+.hp-search-overlay__product[aria-selected="true"] {
+	background: #f1f3f5;
+	outline: none;
+}
+
+.hp-search-overlay__product-image {
+	width: 56px;
+	height: 56px;
+	border-radius: 8px;
+	background: #f6f7f9;
+	overflow: hidden;
+	display: block;
+	flex: 0 0 auto;
+}
+
+.hp-search-overlay__product-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	display: block;
+}
+
+.hp-search-overlay__product-meta {
+	min-width: 0;
+}
+
+.hp-search-overlay__product-title {
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.35;
+	margin: 0 0 2px;
+	color: #1a1a1a;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.hp-search-overlay__product-sub {
+	font-size: 12px;
+	color: #6b7280;
+	margin: 0;
+}
+
+.hp-search-overlay__product-price {
+	font-size: 14px;
+	font-weight: 600;
+	color: #0053e2;
+	white-space: nowrap;
+	text-align: right;
+}
+
+.hp-search-overlay__product-price del {
+	color: #9ca3af;
+	font-weight: 400;
+	font-size: 12px;
+	margin-right: 6px;
+}
+
+/* View all link */
+.hp-search-overlay__view-all {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-top: 6px;
+	padding: 10px 14px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #0053e2;
+	text-decoration: none;
+	border: 1px solid #0053e2;
+	border-radius: 8px;
+}
+
+.hp-search-overlay__view-all:hover {
+	background: #0053e2;
+	color: #ffffff;
+}
+
+/* States */
+.hp-search-overlay__state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 32px 12px;
+	color: #6b7280;
+	font-size: 14px;
+	text-align: center;
+}
+
+.hp-search-overlay__loading {
+	flex-direction: row;
+}
+
+.hp-search-overlay__spinner {
+	width: 18px;
+	height: 18px;
+	border: 2px solid #d6d8db;
+	border-top-color: #0053e2;
+	border-radius: 50%;
+	animation: hp-search-spin 0.8s linear infinite;
+}
+
+@keyframes hp-search-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.hp-search-overlay__empty-hint {
+	color: #9ca3af;
+	font-size: 13px;
+	margin: 0;
+}
+
+/* Body scroll lock helper (added by JS) */
+body.hp-search-open {
+	overflow: hidden;
+	touch-action: none;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	.hp-search-overlay__backdrop,
+	.hp-search-overlay__panel {
+		transition: none;
+	}
+	.hp-search-overlay__spinner {
+		animation: none;
+	}
+}
+
+/* ==========================================================================
+   Desktop refinement (>= 768px) — center a card-style panel, dim around
+   ========================================================================== */
+@media (min-width: 768px) {
+	.hp-search-overlay__panel {
+		position: absolute;
+		top: 24px;
+		left: 50%;
+		right: auto;
+		bottom: auto;
+		transform: translate(-50%, -8px);
+		width: min(720px, calc(100vw - 32px));
+		max-height: min(80vh, 640px);
+		height: auto;
+		border-radius: 14px;
+		box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+		overflow: hidden;
+	}
+
+	.hp-search-overlay[aria-hidden="false"] .hp-search-overlay__panel {
+		transform: translate(-50%, 0);
+	}
+
+	.hp-search-overlay__form {
+		padding: 14px 16px;
+	}
+
+	.hp-search-overlay__cancel {
+		display: none; /* desktop closes via Esc / backdrop / X */
+	}
+
+	.hp-search-overlay__back {
+		display: none;
+	}
+
+	.hp-search-overlay__body {
+		padding: 18px 18px 22px;
+	}
+}
+
+/* ==========================================================================
+   Header trigger styling — keep visual identical, just signal interactivity
+   ========================================================================== */
+.hitprice-search-form__field {
+	cursor: text;
+}
+
+@media (max-width: 767px) {
+	/* Tap target on mobile header */
+	.hitprice-search-form__field {
+		min-height: 40px;
+	}
+}

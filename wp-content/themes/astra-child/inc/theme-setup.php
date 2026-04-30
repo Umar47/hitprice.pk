@@ -37,6 +37,31 @@ function hitprice_enqueue_child_assets() {
 		true
 	);
 
+	// Live search — sitewide (overlay trigger appears in every page header).
+	wp_enqueue_style(
+		'hitprice-search',
+		get_stylesheet_directory_uri() . '/assets/css/search.css',
+		array( 'hitprice-header-footer' ),
+		filemtime( get_stylesheet_directory() . '/assets/css/search.css' )
+	);
+
+	wp_enqueue_script(
+		'hitprice-search',
+		get_stylesheet_directory_uri() . '/assets/js/search.js',
+		array(),
+		filemtime( get_stylesheet_directory() . '/assets/js/search.js' ),
+		true
+	);
+
+	wp_localize_script(
+		'hitprice-search',
+		'hpSearchConfig',
+		array(
+			'restUrl' => rest_url( 'hp/v1/search' ),
+			'nonce'   => wp_create_nonce( 'wp_rest' ),
+		)
+	);
+
 	if ( is_page_template( 'template-homepage.php' ) ) {
 		wp_enqueue_style(
 			'hitprice-front-page',
