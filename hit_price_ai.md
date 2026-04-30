@@ -156,6 +156,22 @@ Build a fast, clean, modern WooCommerce store focused on sales conversion.
 - Used `__()` (not `esc_html__()`) for localized strings since jQuery `.text()` already escapes — fixes literal `&amp;` rendering for "Parse & Insert"
 - Removed the `'max' => 10` cap from `field_hp_detail_specs` flexible content so admins can add unlimited spec sections per product
 
+## Live Search Overlay (2026-05-01)
+- Built a full live search system for WooCommerce products — no external search plugin, entirely custom
+- **Backend (plugin — `hitprice-helper`):**
+  - `inc/search/search-install.php` — creates `wp_hp_search_log` table on activation; auto-upgrades on admin load if DB version mismatches
+  - `inc/search/search-query.php` — 6-pass ranked product search (exact title → starts-with → contains → SKU → tag/category → content/excerpt); transient cached 5 min; filters to visible/purchasable products via `wc_get_product()->is_visible()`; `hp_search_format_products()` returns `id`, `title`, `url`, `price` (wp_kses filtered WC HTML), `image`, `sku`; `hp_search_term_suggestions()` pulls past searches from the log matching a prefix
+  - `inc/search/search-analytics.php` — `hp_log_search()` records every search (term, normalized_term, results_count, user_id, session_hash, ip_hash); `hp_log_search_click()` records product click against a log row; analytics query helpers: `hp_get_top_searches()`, `hp_get_zero_result_searches()`, `hp_get_search_volume_daily()`, `hp_get_top_clicked_products()`, `hp_get_search_summary()`; `hp_get_trending_terms_for_overlay()` returns real top-7d terms, fills remaining slots from admin-set fallback
+  - `inc/search/search-rest.php` — 3 REST endpoints under `hp/v1`: `GET /search/suggest` (live suggestions), `POST /search/click` (click tracking), `GET /search/trending` (overlay empty-state terms); per-IP rate limiting (60 req/60s via transient counter); query length validation (2–100 chars); nonces not required (public endpoints)
+  - `inc/admin/search-admin.php` — WP Admin menu page "Search Analytics" with 4 tabs: Overview (KPI cards + 14-day bar chart + top clicked products), Top Searches (30d), Zero-Result (30d — shows what users searched for that returned nothing), Settings (logging toggle + trending fallback terms field)
+- **Frontend (child theme):**
+  - `template-parts/header/search.php` — header search input + button, both tagged `data-hp-search-trigger`
+  - `template-parts/search/overlay.php` — full-screen overlay shell with backdrop, back/clear/cancel buttons, overlay input, trending chips section, results section (terms chips + product list + view-all link), loading/empty/error states; rendered in `wp_footer` at priority 5
+  - `assets/css/search.css` — mobile-first overlay CSS; full-screen on mobile, centered card (720px max, 80vh) on desktop ≥768px; CSS transitions on backdrop (opacity 180ms) and panel (transform+opacity 220ms); `.hp-search-is-open` class keeps `display:block` during close animation so transition plays correctly; scroll lock via `body.hp-search-open`; reduced-motion support
+  - `assets/js/search.js` — vanilla JS IIFE, no jQuery; reads `window.hpSearchConfig` (REST URL + nonce from `wp_localize_script`); 160ms debounce; AbortController cancels in-flight requests on each new keystroke; client-side Map cache (40-entry LRU) avoids duplicate requests; loading indicator delayed 280ms (fast responses feel instant); `navigator.sendBeacon` for click tracking (fire-and-forget); trending prefetched on first hover/focus of header trigger; arrow-key navigation through product results; Escape to close; chip clicks fill input and search immediately; open/close animation via double-rAF + `hp-search-is-open` class pattern
+- **Admin UX:** trending fallback terms managed at WP Admin → Search Analytics → Settings (comma-separated); real top-search terms take priority, fallback fills remaining slots
+- **Enqueue:** search CSS + JS loaded sitewide (header trigger appears on every page); `hpSearchConfig.restUrl` = `rest_url('hp/v1/search')`, `hpSearchConfig.nonce` = `wp_create_nonce('wp_rest')`
+
 ## Next Tasks
 - Activate the Astra child theme if not already active
 - Create/assign the "Hit Price Homepage" page via Pages → Add New → Template → Hit Price Homepage
@@ -233,7 +249,16 @@ Build a fast, clean, modern WooCommerce store focused on sales conversion.
 - `wp-content/plugins/hitprice-helper/inc/admin/bulk-specs-importer.php` (new — bulk specs importer enqueue)
 - `wp-content/plugins/hitprice-helper/assets/js/admin-bulk-specs.js` (new — modal + parser + ACF JS API insertion)
 - `wp-content/plugins/hitprice-helper/assets/css/admin-bulk-specs.css` (new — modal styles)
-- `wp-content/plugins/hitprice-helper/hitprice-helper.php` (admin-only require for bulk specs importer)
+- `wp-content/plugins/hitprice-helper/hitprice-helper.php` (admin-only require for bulk specs importer + search includes)
+- `wp-content/plugins/hitprice-helper/inc/search/search-install.php` (new)
+- `wp-content/plugins/hitprice-helper/inc/search/search-analytics.php` (new)
+- `wp-content/plugins/hitprice-helper/inc/search/search-query.php` (new)
+- `wp-content/plugins/hitprice-helper/inc/search/search-rest.php` (new)
+- `wp-content/plugins/hitprice-helper/inc/admin/search-admin.php` (new)
+- `wp-content/themes/astra-child/template-parts/search/overlay.php` (new)
+- `wp-content/themes/astra-child/template-parts/header/search.php` (updated — data-hp-search-trigger attributes)
+- `wp-content/themes/astra-child/assets/css/search.css` (new)
+- `wp-content/themes/astra-child/assets/js/search.js` (new)
 - `wp-content/themes/astra-child/template-parts/product/compare.php`
 - `wp-content/themes/astra-child/template-parts/product/features.php`
 - `wp-content/themes/astra-child/template-parts/product/accordions.php`
