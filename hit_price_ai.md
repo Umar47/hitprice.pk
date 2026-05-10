@@ -172,7 +172,44 @@ Build a fast, clean, modern WooCommerce store focused on sales conversion.
 - **Admin UX:** trending fallback terms managed at WP Admin → Search Analytics → Settings (comma-separated); real top-search terms take priority, fallback fills remaining slots
 - **Enqueue:** search CSS + JS loaded sitewide (header trigger appears on every page); `hpSearchConfig.restUrl` = `rest_url('hp/v1/search')`, `hpSearchConfig.nonce` = `wp_create_nonce('wp_rest')`
 
+## Review Image Upload (Phase 7 — 2026-05-05)
+- Logged-in users can attach up to 3 images (JPG/PNG/WEBP, max 5 MB each) when submitting a WC product review
+- **Backend (`hitprice-helper/inc/product/review-images.php` — new):**
+  - `hp_handle_review_image_upload()` hooked on `comment_post`; verifies `hp_review_image_nonce` nonce, confirms user is logged-in and comment type is `review`, validates each file server-side with `finfo` MIME check + size cap, uploads via `wp_handle_upload()` + `wp_insert_attachment()` + `wp_generate_attachment_metadata()`, stores IDs in comment meta `hp_review_images`
+  - `hp_get_review_images($comment_id)` returns `array{ url, full, alt }[]` for use in templates
+  - Required WP includes (`file.php`, `image.php`) loaded on demand — not globally
+- **Frontend hooks (`inc/template-hooks.php`):**
+  - `comment_form_after_comment_field` → `hp_inject_review_image_upload()` — renders upload zone + nonce inside the WC review form (logged-in + `is_product()` guard)
+  - `woocommerce_review_after_comment_text` → `hp_render_review_images_for_comment($comment)` — shows thumbnail strip below each review
+- **JS (`assets/js/single-product.js` — `initReviewImagePreview()`):**
+  - Sets `enctype="multipart/form-data"` on `#commentform` via JS (WP's `comment_form()` has no native enctype arg)
+  - Drag-and-drop + click-to-upload; filters to allowed MIME + max size client-side
+  - Renders inline `<img>` previews with individual remove buttons; rebuilds `DataTransfer` to keep native file input in sync
+  - 3-image cap enforced client-side
+- **CSS (`assets/css/product-sections.css`):** dashed upload zone with hover/drag state, 80×80 preview thumbnails with × remove button, review card image strip (80×80 thumbnails, open full image on click)
+
+## Why Choose + Bottom Trust Strip (Phase 8 — 2026-05-05)
+- **Bug fixed:** `hp_get_badge_keys()`, `hp_get_global_setting()`, `hp_get_global_badge()` were defined only inside `is_admin()` in `global-settings.php` — moved to `product-data.php` (loaded unconditionally) so they work on the front end; removed from `global-settings.php` with a comment noting the move; this also fixes the pre-existing `trust-badges.php` silent render failure
+- **Phase 8A — Why Choose section (`template-parts/product/why-choose.php`):** reads `$product->get_description()` (WC long description); returns early if empty; heading "Why Choose [name]?"; `wp_kses_post()` output; hooked at `woocommerce_after_single_product_summary` priority 20
+- **Phase 8B — Bottom trust strip (`template-parts/product/trust-strip-bottom.php`):** 4 global badge slots (`safe_payments`, `easy_returns`, `customer_support`, `satisfaction`); skips unconfigured slots; 4-col grid desktop → 2-col mobile; description text hidden on mobile; hooked at priority 25
+- **CSS:** Why Choose section scoped under `.hp-why-choose` with prose typography, heading styles for nested h2/h3/h4, max-width 900px; Trust strip scoped under `.hp-trust-strip-bottom` / `.hp-tsb-item`
+
+## CSS Polish + Mobile QA (Phase 9 — 2026-05-05)
+- **Sticky offsets:** `--hp-header-h` CSS variable set by `initStickyTabOffset()` in `single-product.js`; measures `#masthead` computed position at runtime and updates on resize; `.hp-tabs__nav-wrap { top: var(--hp-header-h, 0px) }` and `.hp-gallery-outer { top: calc(var(--hp-header-h, 0px) + 24px) }` both updated to consume the variable
+- **Star rating breakdown:** Added to `tab-reviews.php` above WC reviews; uses `$product->get_average_rating()`, `get_review_count()`, `get_rating_counts()` (WC-cached); renders average number + WC star HTML + 5 bar rows with PHP-computed `width` inline styles; CSS-only bar animation on load; accessible `role="img"` + `aria-label` on each bar track
+- **WC reviews conflicts:** `.hp-tabs__panel #reviews` reset rules expanded — clears WC `padding`, `margin`, `commentlist` list styles, and `#respond` top margin
+- **Print styles:** `.hp-sticky-bar { display:none }`, `.hp-tabs__nav-wrap { position:static }`, `.hp-review-upload { display:none }` all suppressed in `@media print`
+- **Mobile pass:**
+  - `product-hero-critical.css`: added `375px` breakpoint (title 17px, price 20px, trust badges tighter) and `320px` breakpoint (title 16px, price 18px, payment methods description hidden)
+  - `product-sections.css`: added `375px` breakpoint (tab buttons 12px 10px padding, sections 28px padding, trust strip single-column, related cards 160px, why-choose tighter)
+- **Verified:** critical CSS inline confirmed active in `theme-setup.php` (`wp_head` priority 99); sections CSS deferred via `media='print'` + `onload` confirmed in `hitprice_deferred_product_css_onload()` filter
+
 ## Next Tasks
+- Visual QA on live product page — test variable products, sticky nav, star breakdown, review image upload, responsive layout at all breakpoints
+- Populate Global Settings badges (safe_payments, easy_returns, customer_support, satisfaction, genuine, best_price) with real icons and labels so trust strips render
+- Assign WordPress menus for header and footer
+- Refine header and footer design
+- Build category archive layout
 - Activate the Astra child theme if not already active
 - Create/assign the "Hit Price Homepage" page via Pages → Add New → Template → Hit Price Homepage
 - Populate ACF tabs (Hero Slider, Trust Strip, Hot Deals, Latest Phones, Shop By Category, Why Buy) with real content

@@ -28,7 +28,9 @@
       "Bash(curl -sL -D - http://hit-price.local/checkout/)",
       "Bash(curl -s http://hit-price.local/?wc-ajax=checkout)",
       "Bash(curl -s http://hit-price.local/wp-admin/admin-ajax.php)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Muhammad Umar\\\\Local Sites\\\\hit-price\\\\app\\\\public\\\\wp-content\\\\themes\\\\astra-child\" -Recurse -File)",
+      "Bash(Select-Object -ExpandProperty FullName)"
     ]
   }
 }

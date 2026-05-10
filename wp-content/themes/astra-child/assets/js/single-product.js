@@ -293,8 +293,8 @@
 		var form = document.querySelector('.variations_form');
 		if (!form) return;
 
-		// Build per-attribute color overrides from WooCommerce variation data.
-		var variationColors = buildVariationColorMap(form);
+		// Build per-attribute variation image maps from WooCommerce variation JSON.
+		var variationImages = buildVariationImageMap(form);
 
 		var rows = form.querySelectorAll('.variations tr');
 		if (!rows.length) return;
@@ -306,9 +306,9 @@
 			var options = select.querySelectorAll('option');
 			if (options.length <= 1) return;
 
-			// Match this select to its attribute key in the variation JSON.
 			var attrName = select.getAttribute('data-attribute_name') || select.getAttribute('name') || '';
-			var attrOverrides = variationColors[attrName] || {};
+			var isColorAttr = /color/i.test(attrName);
+			var imgMap = isColorAttr ? (variationImages[attrName] || {}) : {};
 
 			var container = document.createElement('div');
 			container.className = 'hp-swatches';
@@ -316,19 +316,32 @@
 			options.forEach(function (option) {
 				if (!option.value) return;
 
+				var text = option.textContent.trim();
+				var imgSrc = imgMap[option.value.toLowerCase().trim()] || '';
+
 				var swatch = document.createElement('button');
 				swatch.type = 'button';
-				swatch.className = 'hp-swatch';
 				swatch.setAttribute('data-value', option.value);
+				swatch.setAttribute('aria-label', text);
+				swatch.setAttribute('title', text);
 
-				var text = option.textContent.trim();
-				var color = detectColor(text, attrOverrides);
-				if (color) {
-					swatch.classList.add('hp-swatch--color');
-					swatch.style.backgroundColor = color;
-					swatch.setAttribute('aria-label', text);
-					swatch.setAttribute('title', text);
+				if (imgSrc) {
+					// Image-based swatch.
+					swatch.className = 'hp-swatch hp-swatch--image';
+					var img = document.createElement('img');
+					img.src = imgSrc;
+					img.alt = text;
+					img.width = 56;
+					img.height = 56;
+					img.loading = 'lazy';
+					var label = document.createElement('span');
+					label.className = 'hp-swatch-label';
+					label.textContent = text;
+					swatch.appendChild(img);
+					swatch.appendChild(label);
 				} else {
+					// Text swatch fallback (e.g. Storage/RAM).
+					swatch.className = 'hp-swatch';
 					swatch.textContent = text;
 				}
 
@@ -372,125 +385,43 @@
 		});
 	}
 
-	/* ---- Color detection ---- */
-
 	/**
-	 * Build per-attribute color override maps from WooCommerce variation JSON.
+	 * Build per-attribute variation image maps from WooCommerce variation JSON.
+	 * Maps { attribute_name: { attribute_value_lowercase: thumb_src } }.
 	 *
-	 * Reads hp_swatch_color from each variation and maps attribute values
-	 * to their admin-defined hex. Uses a consistency check: if the same
-	 * attribute value maps to different colors across variations, it is
-	 * discarded (indicates a non-color attribute like storage/size).
+	 * Uses the first thumb found per value; if a value maps to different images
+	 * across variations it keeps the first (WooCommerce picks first match too).
 	 *
 	 * @param {Element} form The .variations_form element.
-	 * @return {Object} { attribute_name: { value: hex } }
+	 * @return {Object}
 	 */
-	function buildVariationColorMap(form) {
+	function buildVariationImageMap(form) {
 		var raw = form.getAttribute('data-product_variations');
 		var variations;
-		try {
-			variations = JSON.parse(raw);
-		} catch (e) {
-			return {};
-		}
+		try { variations = JSON.parse(raw); } catch (e) { return {}; }
 		if (!variations || !Array.isArray(variations)) return {};
 
-		var attrMaps  = {};  // attrName → { value → hex }
-		var conflicts = {};  // attrName → { value → true }
+		var maps = {};
 
 		variations.forEach(function (v) {
-			if (!v.hp_swatch_color) return;
+			var src = v.image && (v.image.thumb_src || v.image.src);
+			if (!src) return;
 			var attrs = v.attributes || {};
 
 			Object.keys(attrs).forEach(function (attrName) {
 				var value = (attrs[attrName] || '').toLowerCase().trim();
 				if (!value) return;
-
-				if (!attrMaps[attrName])  attrMaps[attrName]  = {};
-				if (!conflicts[attrName]) conflicts[attrName] = {};
-
-				if (value in attrMaps[attrName]) {
-					if (attrMaps[attrName][value] !== v.hp_swatch_color) {
-						conflicts[attrName][value] = true;
-					}
-				} else {
-					attrMaps[attrName][value] = v.hp_swatch_color;
+				if (!maps[attrName]) maps[attrName] = {};
+				// First image wins per value.
+				if (!maps[attrName][value]) {
+					maps[attrName][value] = src;
 				}
 			});
 		});
 
-		// Remove values that mapped to different colors (non-color attributes).
-		Object.keys(conflicts).forEach(function (attrName) {
-			Object.keys(conflicts[attrName]).forEach(function (value) {
-				delete attrMaps[attrName][value];
-			});
-		});
-
-		return attrMaps;
+		return maps;
 	}
 
-	var COLOR_MAP = {
-		'black': '#000', 'white': '#fff', 'red': '#d32f2f', 'blue': '#1976d2',
-		'green': '#388e3c', 'yellow': '#fbc02d', 'pink': '#e91e63', 'purple': '#7b1fa2',
-		'orange': '#f57c00', 'gray': '#757575', 'grey': '#757575', 'gold': '#c8a415',
-		'silver': '#c0c0c0', 'navy': '#0d3b66', 'teal': '#00897b', 'brown': '#795548',
-		'midnight': '#191970', 'natural titanium': '#8c8479', 'desert titanium': '#c4a882',
-		'white titanium': '#e8e6e1', 'black titanium': '#3c3c3c',
-		'lime': '#00ff00', 'cyan': '#00bcd4', 'magenta': '#e91e63', 'maroon': '#800000',
-		'olive': '#808000', 'coral': '#ff7f50', 'salmon': '#fa8072', 'ivory': '#fffff0',
-		'beige': '#f5f5dc', 'turquoise': '#40e0d0', 'indigo': '#3f51b5', 'violet': '#ee82ee',
-		'crimson': '#dc143c', 'khaki': '#c3b091', 'lavender': '#e6e6fa', 'peach': '#ffcba4',
-		'rose gold': '#b76e79', 'charcoal': '#36454f', 'cream': '#fffdd0', 'mint': '#98ff98',
-		'bronze': '#cd7f32', 'copper': '#b87333', 'platinum': '#e5e4e2'
-	};
-
-	/**
-	 * Try to detect a valid CSS color using the browser.
-	 *
-	 * @param {string} value Lowercased color candidate.
-	 * @return {string|false} The browser-resolved color or false.
-	 */
-	function browserDetectColor(value) {
-		var el = document.createElement('span');
-		el.style.color = '';
-		el.style.color = value;
-		return el.style.color !== '' ? value : false;
-	}
-
-	/**
-	 * Detect a color for a swatch value.
-	 *
-	 * Priority:
-	 * 1. Admin variation overrides (per-attribute)
-	 * 2. Built-in COLOR_MAP
-	 * 3. Browser CSS color detection
-	 * 4. false (not a color — render as text)
-	 *
-	 * @param {string} text       Original attribute text.
-	 * @param {Object} [overrides] Per-attribute admin color map.
-	 * @return {string|false} Hex/color string or false.
-	 */
-	function detectColor(text, overrides) {
-		var key = text.toLowerCase().trim();
-
-		// 1. Admin per-variation overrides — highest priority.
-		if (overrides && key in overrides) {
-			return overrides[key];
-		}
-
-		// 2. Built-in map.
-		if (key in COLOR_MAP) {
-			return COLOR_MAP[key];
-		}
-
-		// 3. Browser detection — catches any valid CSS color name.
-		var detected = browserDetectColor(key);
-		if (detected) {
-			return detected;
-		}
-
-		return false;
-	}
 
 
 	/* ====================================================================
@@ -562,12 +493,359 @@
 
 
 	/* ====================================================================
+	 * VIEWERS COUNT — seeded pseudo-random, consistent per product per day
+	 * ==================================================================== */
+	function initViewers() {
+		var nodes = document.querySelectorAll( '.hp-stock-viewers[data-product-id]' );
+		if ( ! nodes.length ) return;
+
+		var first     = nodes[0];
+		var productId = parseInt( first.getAttribute( 'data-product-id' ), 10 ) || 1;
+		var min       = parseInt( first.getAttribute( 'data-viewers-min' ), 10 ) || 12;
+		var max       = parseInt( first.getAttribute( 'data-viewers-max' ), 10 ) || 48;
+
+		// Seed: product ID + current date parts (changes daily, consistent within day).
+		var d    = new Date();
+		var seed = productId * 1000 + d.getFullYear() * 400 + ( d.getMonth() + 1 ) * 31 + d.getDate();
+
+		// Simple deterministic hash.
+		seed = ( ( seed ^ ( seed >>> 16 ) ) * 0x45d9f3b ) & 0xffffffff;
+		seed = ( ( seed ^ ( seed >>> 16 ) ) * 0x45d9f3b ) & 0xffffffff;
+		seed = ( seed ^ ( seed >>> 16 ) ) >>> 0;
+
+		var count = min + ( seed % ( max - min + 1 ) );
+
+		nodes.forEach( function ( node ) {
+			var span = node.querySelector( '.hp-viewers-count' );
+			if ( span ) {
+				span.textContent = count;
+				span.setAttribute( 'aria-label', count + ' people' );
+			}
+		} );
+	}
+
+	/* ====================================================================
+	 * QUANTITY +/- BUTTONS
+	 * ==================================================================== */
+	function initQtyButtons() {
+		var qty = document.querySelector( '.hp-product-layout .summary .cart .quantity .qty' );
+		if ( ! qty ) return;
+
+		var wrap = document.createElement( 'div' );
+		wrap.className = 'hp-qty-wrap';
+
+		var minus = document.createElement( 'button' );
+		minus.type = 'button';
+		minus.className = 'hp-qty-btn hp-qty-btn--minus';
+		minus.setAttribute( 'aria-label', 'Decrease quantity' );
+		minus.textContent = '−'; // minus sign
+
+		var plus = document.createElement( 'button' );
+		plus.type = 'button';
+		plus.className = 'hp-qty-btn hp-qty-btn--plus';
+		plus.setAttribute( 'aria-label', 'Increase quantity' );
+		plus.textContent = '+';
+
+		qty.parentNode.insertBefore( wrap, qty );
+		wrap.appendChild( minus );
+		wrap.appendChild( qty );
+		wrap.appendChild( plus );
+
+		minus.addEventListener( 'click', function () {
+			var val = parseInt( qty.value, 10 ) || 1;
+			var min = parseInt( qty.getAttribute( 'min' ), 10 ) || 1;
+			if ( val > min ) {
+				qty.value = val - 1;
+				qty.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+			}
+		} );
+
+		plus.addEventListener( 'click', function () {
+			var val = parseInt( qty.value, 10 ) || 1;
+			var max = parseInt( qty.getAttribute( 'max' ), 10 ) || 9999;
+			if ( val < max ) {
+				qty.value = val + 1;
+				qty.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+			}
+		} );
+	}
+
+	/* ====================================================================
+	 * BUY NOW — add to cart via AJAX then redirect to checkout
+	 * ==================================================================== */
+	function initBuyNow() {
+		var btn = document.querySelector( '.hp-buy-now-btn' );
+		if ( ! btn ) return;
+
+		var productId    = btn.getAttribute( 'data-product-id' );
+		var productType  = btn.getAttribute( 'data-product-type' );
+		var checkoutUrl  = btn.getAttribute( 'data-checkout-url' );
+
+		btn.addEventListener( 'click', function () {
+			if ( productType === 'variable' ) {
+				// For variable: rely on WC's existing variation form to get the selected variation.
+				var form = document.querySelector( '.variations_form' );
+				if ( ! form ) { window.location.href = checkoutUrl; return; }
+
+				var variationId = form.querySelector( '[name="variation_id"]' );
+				if ( ! variationId || ! variationId.value ) {
+					// No variation selected — scroll up to prompt user.
+					form.scrollIntoView( { behavior: 'smooth', block: 'center' } );
+					return;
+				}
+
+				var params = new URLSearchParams( new FormData( form ) );
+				params.set( 'add-to-cart', variationId.value );
+				params.set( 'quantity', form.querySelector( '.qty' ) ? form.querySelector( '.qty' ).value : '1' );
+				doAddToCart( params.toString(), checkoutUrl );
+			} else {
+				// Simple product.
+				var qtyEl = document.querySelector( '.hp-product-layout .qty' );
+				var qty   = qtyEl ? qtyEl.value : '1';
+				doAddToCart( 'add-to-cart=' + productId + '&quantity=' + qty, checkoutUrl );
+			}
+		} );
+	}
+
+	function doAddToCart( params, redirectUrl ) {
+		var url = window.location.origin + window.location.pathname + '?' + params;
+
+		fetch( url, { method: 'GET', headers: { 'X-Requested-With': 'XMLHttpRequest' } } )
+			.then( function () {
+				window.location.href = redirectUrl;
+			} )
+			.catch( function () {
+				window.location.href = redirectUrl;
+			} );
+	}
+
+	/* ====================================================================
+	 * PRODUCT TABS
+	 * ==================================================================== */
+	function initTabs() {
+		var tabsEl = document.querySelector('[data-hp-tabs]');
+		if (!tabsEl) return;
+
+		var tabs   = tabsEl.querySelectorAll('.hp-tabs__tab');
+		var panels = tabsEl.querySelectorAll('.hp-tabs__panel');
+
+		function activateTab(id) {
+			tabs.forEach(function (btn) {
+				var active = btn.dataset.tab === id;
+				btn.classList.toggle('is-active', active);
+				btn.setAttribute('aria-selected', active ? 'true' : 'false');
+			});
+			panels.forEach(function (panel) {
+				var active = panel.id === 'hp-tab-' + id;
+				panel.classList.toggle('is-active', active);
+				if (active) {
+					panel.removeAttribute('hidden');
+				} else {
+					panel.setAttribute('hidden', '');
+				}
+			});
+			// Scroll active tab button into view on mobile.
+			var activeBtn = tabsEl.querySelector('.hp-tabs__tab.is-active');
+			if (activeBtn) {
+				activeBtn.scrollIntoView({ block: 'nearest', inline: 'center' });
+			}
+		}
+
+		tabs.forEach(function (btn) {
+			btn.addEventListener('click', function () {
+				var id = btn.dataset.tab;
+				activateTab(id);
+				history.replaceState(null, '', '#hp-tab-' + id);
+			});
+		});
+
+		// Honour URL hash on load.
+		var hash = window.location.hash;
+		if (hash && hash.indexOf('#hp-tab-') === 0) {
+			var id = hash.replace('#hp-tab-', '');
+			if (tabsEl.querySelector('[data-tab="' + id + '"]')) {
+				activateTab(id);
+				// Scroll section into view after a short paint delay.
+				setTimeout(function () {
+					tabsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				}, 120);
+			}
+		}
+	}
+
+	/* ====================================================================
+	 * RELATED PRODUCTS SLIDER
+	 * ==================================================================== */
+	function initRelatedSlider() {
+		var section = document.querySelector('.hp-related');
+		if (!section) return;
+
+		var track = section.querySelector('[data-hp-slider="related"]');
+		var prevBtn = section.querySelector('.hp-related__arrow--prev');
+		var nextBtn = section.querySelector('.hp-related__arrow--next');
+		if (!track || !prevBtn || !nextBtn) return;
+
+		function getScrollAmount() {
+			var card = track.querySelector('.hp-related__card');
+			if (!card) return 260;
+			var gap = parseFloat(getComputedStyle(track).columnGap) || 16;
+			return card.offsetWidth + gap;
+		}
+
+		prevBtn.addEventListener('click', function () {
+			track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+		});
+
+		nextBtn.addEventListener('click', function () {
+			track.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+		});
+
+		var arrowsEl = section.querySelector('.hp-related__arrows');
+
+		function updateArrows() {
+			var hasOverflow = track.scrollWidth > track.clientWidth + 1;
+			if (arrowsEl) {
+				arrowsEl.style.visibility = hasOverflow ? '' : 'hidden';
+			}
+			var atStart = track.scrollLeft <= 4;
+			var atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+			prevBtn.disabled = atStart;
+			nextBtn.disabled = atEnd;
+			prevBtn.style.opacity = atStart ? '0.35' : '1';
+			nextBtn.style.opacity = atEnd ? '0.35' : '1';
+		}
+
+		track.addEventListener('scroll', updateArrows, { passive: true });
+		window.addEventListener('resize', updateArrows);
+		requestAnimationFrame(updateArrows);
+	}
+
+	/* ====================================================================
+	 * STICKY OFFSET — measure fixed header and set --hp-header-h CSS var
+	 * ==================================================================== */
+	function initStickyTabOffset() {
+		var header = document.getElementById('masthead');
+		if (!header) return;
+
+		function update() {
+			var pos = window.getComputedStyle(header).position;
+			var h   = (pos === 'fixed' || pos === 'sticky') ? header.offsetHeight : 0;
+			document.documentElement.style.setProperty('--hp-header-h', h + 'px');
+		}
+
+		update();
+		window.addEventListener('resize', update, { passive: true });
+	}
+
+	/* ====================================================================
+	 * REVIEW IMAGE UPLOAD — client-side preview + enctype injection
+	 * ==================================================================== */
+	function initReviewImagePreview() {
+		var zone     = document.getElementById('hp-review-upload-zone');
+		var input    = document.getElementById('hp_review_images');
+		var previews = document.getElementById('hp-review-upload-previews');
+		if (!zone || !input || !previews) return;
+
+		// WC review form uses comment_form() which has no enctype arg — add it here.
+		var form = document.getElementById('commentform');
+		if (form) {
+			form.setAttribute('enctype', 'multipart/form-data');
+		}
+
+		var selectedFiles = [];
+
+		input.addEventListener('change', function () {
+			mergeFiles(Array.prototype.slice.call(this.files));
+			// Reset native input so the same file can be re-selected after removal.
+			this.value = '';
+		});
+
+		zone.addEventListener('dragover', function (e) {
+			e.preventDefault();
+			zone.classList.add('hp-review-upload__zone--drag');
+		});
+
+		zone.addEventListener('dragleave', function (e) {
+			if (!zone.contains(e.relatedTarget)) {
+				zone.classList.remove('hp-review-upload__zone--drag');
+			}
+		});
+
+		zone.addEventListener('drop', function (e) {
+			e.preventDefault();
+			zone.classList.remove('hp-review-upload__zone--drag');
+			mergeFiles(Array.prototype.slice.call(e.dataTransfer.files));
+		});
+
+		function mergeFiles(files) {
+			var allowed = ['image/jpeg', 'image/png', 'image/webp'];
+			var maxSize = 5 * 1024 * 1024;
+
+			files = files.filter(function (f) {
+				return allowed.indexOf(f.type) !== -1 && f.size <= maxSize;
+			});
+
+			selectedFiles = selectedFiles.concat(files).slice(0, 3);
+			renderPreviews();
+			syncInputFiles();
+		}
+
+		function renderPreviews() {
+			previews.innerHTML = '';
+			selectedFiles.forEach(function (file, i) {
+				var item = document.createElement('div');
+				item.className = 'hp-review-upload__preview';
+
+				var img = document.createElement('img');
+				var objectUrl = URL.createObjectURL(file);
+				img.src = objectUrl;
+				img.alt = file.name;
+				img.addEventListener('load', function () { URL.revokeObjectURL(objectUrl); });
+
+				var removeBtn = document.createElement('button');
+				removeBtn.type = 'button';
+				removeBtn.className = 'hp-review-upload__remove';
+				removeBtn.setAttribute('aria-label', 'Remove image');
+				removeBtn.innerHTML = '&times;';
+				removeBtn.addEventListener('click', (function (idx) {
+					return function () {
+						selectedFiles.splice(idx, 1);
+						renderPreviews();
+						syncInputFiles();
+					};
+				})(i));
+
+				item.appendChild(img);
+				item.appendChild(removeBtn);
+				previews.appendChild(item);
+			});
+		}
+
+		function syncInputFiles() {
+			try {
+				var dt = new DataTransfer();
+				selectedFiles.forEach(function (f) { dt.items.add(f); });
+				input.files = dt.files;
+			} catch (e) {
+				// DataTransfer not supported — file list won't update in very old browsers.
+			}
+		}
+	}
+
+	/* ====================================================================
 	 * INIT
 	 * ==================================================================== */
 	function init() {
+		initStickyTabOffset();
 		initGallery();
 		initSwatches();
 		initStickyBar();
+		initViewers();
+		initQtyButtons();
+		initBuyNow();
+		initTabs();
+		initRelatedSlider();
+		initReviewImagePreview();
 	}
 
 	if (document.readyState === 'loading') {

@@ -17,9 +17,9 @@ define( 'HITPRICE_HELPER_URL', plugin_dir_url( __FILE__ ) );
 
 require_once HITPRICE_HELPER_PATH . 'inc/acf/homepage-fields.php';
 require_once HITPRICE_HELPER_PATH . 'inc/acf/product-fields.php';
-require_once HITPRICE_HELPER_PATH . 'inc/acf/swatch-fields.php';
 require_once HITPRICE_HELPER_PATH . 'inc/homepage/homepage-data.php';
 require_once HITPRICE_HELPER_PATH . 'inc/product/product-data.php';
+require_once HITPRICE_HELPER_PATH . 'inc/product/review-images.php';
 require_once HITPRICE_HELPER_PATH . 'inc/checkout/checkout-fields.php';
 
 require_once HITPRICE_HELPER_PATH . 'inc/search/search-install.php';
@@ -30,6 +30,7 @@ require_once HITPRICE_HELPER_PATH . 'inc/search/search-rest.php';
 register_activation_hook( __FILE__, 'hp_search_activate' );
 
 if ( is_admin() ) {
+	require_once HITPRICE_HELPER_PATH . 'inc/admin/global-settings.php';
 	require_once HITPRICE_HELPER_PATH . 'inc/admin/bulk-specs-importer.php';
 	require_once HITPRICE_HELPER_PATH . 'inc/admin/search-admin.php';
 }

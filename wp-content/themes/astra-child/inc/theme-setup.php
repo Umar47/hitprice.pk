@@ -80,6 +80,13 @@ function hitprice_enqueue_child_assets() {
 	}
 
 	if ( function_exists( 'is_product' ) && is_product() ) {
+		wp_enqueue_style(
+			'font-awesome',
+			'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css',
+			array(),
+			null
+		);
+
 		// Deferred product sections CSS with print/onload pattern.
 		wp_enqueue_style(
 			'hitprice-product-sections',

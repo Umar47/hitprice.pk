@@ -1,0 +1,92 @@
+/* HitPrice Global Settings — admin-only styles */
+
+.hp-settings-wrap {
+	max-width: 900px;
+}
+
+.hp-section-title {
+	font-size: 16px;
+	font-weight: 600;
+	margin: 28px 0 6px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.hp-divider {
+	border: none;
+	border-top: 1px solid #dcdcde;
+	margin: 32px 0;
+}
+
+/* Price icons repeater */
+.hp-icon-repeater {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-top: 16px;
+}
+
+.hp-icon-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 14px 16px;
+}
+
+.hp-icon-row__preview {
+	width: 72px;
+	height: 72px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #f6f7f7;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.hp-icon-thumb {
+	max-width: 68px;
+	max-height: 68px;
+	object-fit: contain;
+}
+
+.hp-icon-empty {
+	font-size: 11px;
+	color: #8c8f94;
+}
+
+.hp-icon-row__fields {
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: flex-start;
+}
+
+.hp-icon-row__fields label {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: 12px;
+	color: #50575e;
+	flex: 1;
+	min-width: 160px;
+}
+
+.hp-icon-row__fields input.widefat {
+	font-size: 13px;
+}
+
+.hp-icon-delete-row {
+	flex-shrink: 0;
+	align-self: center;
+	color: #b32d2e !important;
+}
+
+.hidden {
+	display: none !important;
+}
