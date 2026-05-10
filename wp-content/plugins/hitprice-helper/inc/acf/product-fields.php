@@ -119,61 +119,6 @@ function hp_register_product_acf_fields() {
 		)
 	);
 
-	// Feature Cards repeater (max 3).
-	acf_add_local_field_group(
-		array(
-			'key'      => 'group_hp_product_features',
-			'title'    => 'Product Features',
-			'fields'   => array(
-				array(
-					'key'          => 'field_hp_feature_cards',
-					'label'        => 'Feature Cards',
-					'name'         => 'hp_feature_cards',
-					'type'         => 'repeater',
-					'max'          => 3,
-					'layout'       => 'block',
-					'button_label' => 'Add Feature Card',
-					'sub_fields'   => array(
-						array(
-							'key'           => 'field_hp_feature_image',
-							'label'         => 'Image',
-							'name'          => 'image',
-							'type'          => 'image',
-							'return_format' => 'array',
-							'preview_size'  => 'medium',
-						),
-						array(
-							'key'        => 'field_hp_feature_title',
-							'label'      => 'Title',
-							'name'       => 'title',
-							'type'       => 'text',
-							'required'   => 1,
-						),
-						array(
-							'key'        => 'field_hp_feature_description',
-							'label'      => 'Description',
-							'name'       => 'description',
-							'type'       => 'textarea',
-							'rows'       => 3,
-						),
-					),
-				),
-			),
-			'location' => array(
-				array(
-					array(
-						'param'    => 'post_type',
-						'operator' => '==',
-						'value'    => 'product',
-					),
-				),
-			),
-			'position'     => 'normal',
-			'style'        => 'default',
-			'menu_order'   => 10,
-		)
-	);
-
 	// Detail Specs flexible content (max 10 layouts).
 	acf_add_local_field_group(
 		array(

@@ -114,25 +114,6 @@ function hp_get_compare_products( $product_id, $limit = 4 ) {
 	return $products;
 }
 
-/**
- * Get product feature cards from ACF repeater.
- *
- * @param int $product_id Product ID.
- * @return array
- */
-function hp_get_product_features( $product_id ) {
-	if ( ! function_exists( 'get_field' ) ) {
-		return array();
-	}
-
-	$features = get_field( 'hp_feature_cards', $product_id );
-
-	if ( ! is_array( $features ) ) {
-		return array();
-	}
-
-	return array_slice( $features, 0, 3 );
-}
 
 /**
  * Get product detail specs from ACF flexible content.
