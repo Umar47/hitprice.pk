@@ -1,92 +1,324 @@
-/* HitPrice Global Settings — admin-only styles */
+/* ============================================================
+   HitPrice Admin Settings — scoped to .hp-spp-settings
+   ============================================================ */
 
 .hp-settings-wrap {
-	max-width: 900px;
+	max-width: 980px;
 }
 
-.hp-section-title {
-	font-size: 16px;
-	font-weight: 600;
-	margin: 28px 0 6px;
-	padding-bottom: 8px;
+.hp-spp-settings h1 {
+	font-size: 22px;
+	font-weight: 700;
+	color: #1d2327;
+	margin: 0 0 24px;
+	padding-bottom: 16px;
 	border-bottom: 1px solid #dcdcde;
 }
 
-.hp-divider {
-	border: none;
-	border-top: 1px solid #dcdcde;
-	margin: 32px 0;
+/* ── Notice ───────────────────────────────────────────────── */
+.hp-spp-settings .notice {
+	margin: 0 0 24px;
 }
 
-/* Price icons repeater */
-.hp-icon-repeater {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	margin-top: 16px;
-}
-
-.hp-icon-row {
-	display: flex;
-	align-items: flex-start;
-	gap: 14px;
+/* ── Card ─────────────────────────────────────────────────── */
+.hp-card {
 	background: #fff;
 	border: 1px solid #dcdcde;
-	border-radius: 6px;
-	padding: 14px 16px;
+	border-radius: 10px;
+	padding: 24px;
+	margin-bottom: 20px;
 }
 
-.hp-icon-row__preview {
-	width: 72px;
-	height: 72px;
+.hp-card__header {
+	margin-bottom: 20px;
+	padding-bottom: 14px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.hp-card__title {
+	font-size: 14px;
+	font-weight: 700;
+	color: #1d2327;
+	margin: 0 0 6px;
+	padding: 0;
+	border: none;
+}
+
+.hp-card__desc {
+	font-size: 13px;
+	color: #646970;
+	margin: 0;
+	line-height: 1.5;
+}
+
+.hp-card__note {
+	font-size: 12px;
+	color: #8c8f94;
+	margin: 10px 0 0;
+}
+
+/* ── Form table inside card ───────────────────────────────── */
+.hp-spp-settings .form-table {
+	margin: 0;
+	border: none;
+}
+
+.hp-spp-settings .form-table th {
+	width: 180px;
+	padding: 14px 20px 14px 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: #1d2327;
+	vertical-align: top;
+}
+
+.hp-spp-settings .form-table td {
+	padding: 10px 0;
+	vertical-align: top;
+}
+
+.hp-spp-settings .form-table input[type="text"],
+.hp-spp-settings .form-table input[type="number"] {
+	border-radius: 4px;
+	border-color: #dcdcde;
+	height: 36px;
+	line-height: 36px;
+	padding: 0 10px;
+	font-size: 13px;
+}
+
+.hp-spp-settings .form-table label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+}
+
+/* ── Gallery top (PTA / Best Price) ──────────────────────── */
+.hp-gallery-top-field {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.hp-gallery-top-preview {
+	width: 64px;
+	height: 64px;
 	flex-shrink: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	background: #f6f7f7;
-	border-radius: 4px;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.hp-gallery-top-preview img {
+	max-width: 58px;
+	max-height: 58px;
+	object-fit: contain;
+}
+
+.hp-gallery-top-field label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #1d2327;
+	margin-left: 4px;
+}
+
+.hp-gallery-top-field label input[type="text"] {
+	font-weight: 400;
+	width: 220px;
+}
+
+/* ── Icon repeater (Gallery strip / Price icons / Why Buy) ── */
+.hp-icon-repeater {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 0;
+}
+
+.hp-icon-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	background: #f9f9f9;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	padding: 14px 16px;
+}
+
+.hp-icon-row__preview {
+	width: 60px;
+	height: 60px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
 	overflow: hidden;
 }
 
 .hp-icon-thumb {
-	max-width: 68px;
-	max-height: 68px;
+	max-width: 54px;
+	max-height: 54px;
 	object-fit: contain;
+	display: block;
 }
 
 .hp-icon-empty {
 	font-size: 11px;
 	color: #8c8f94;
+	text-align: center;
+	line-height: 1.3;
 }
 
 .hp-icon-row__fields {
 	flex: 1;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px;
 	align-items: flex-start;
+	gap: 6px 10px;
+}
+
+.hp-icon-row__fields > .button {
+	align-self: flex-start;
+	flex-shrink: 0;
 }
 
 .hp-icon-row__fields label {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 3px;
 	font-size: 12px;
-	color: #50575e;
+	font-weight: 600;
+	color: #3c434a;
 	flex: 1;
 	min-width: 160px;
 }
 
-.hp-icon-row__fields input.widefat {
+.hp-icon-row__fields label input {
+	height: 34px;
+	line-height: 34px;
+	padding: 0 10px;
 	font-size: 13px;
+	font-weight: 400;
+	border-color: #dcdcde;
+	border-radius: 4px;
+	width: 100%;
 }
 
-.hp-icon-delete-row {
+.hp-icon-row__fields .button {
+	height: 34px;
+	line-height: 32px;
+	font-size: 12px;
+}
+
+.hp-icon-delete-row,
+.hp-gbot-delete-row,
+.hp-wb-delete-row {
 	flex-shrink: 0;
 	align-self: center;
 	color: #b32d2e !important;
+	font-size: 12px;
+	text-decoration: none;
+	margin-left: auto;
 }
 
+/* ── Bottom Trust Strip repeater ─────────────────────────── */
+.hp-trust-strip-repeater {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.hp-trust-strip-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	background: #f9f9f9;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	padding: 14px 16px;
+}
+
+.hp-trust-strip-row__num {
+	flex-shrink: 0;
+	width: 52px;
+	font-size: 12px;
+	font-weight: 700;
+	color: #646970;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	padding-top: 6px;
+}
+
+.hp-trust-strip-row__fields {
+	flex: 1;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px 12px;
+}
+
+.hp-trust-strip-row__fields label {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #3c434a;
+}
+
+.hp-trust-strip-row__fields label input {
+	height: 34px;
+	line-height: 34px;
+	padding: 0 10px;
+	font-size: 13px;
+	font-weight: 400;
+	border-color: #dcdcde;
+	border-radius: 4px;
+}
+
+.hp-trust-strip-row__subtitle {
+	grid-column: 1 / -1;
+}
+
+/* ── Add row button ───────────────────────────────────────── */
+.hp-btn-add-row {
+	margin-top: 12px;
+	font-size: 13px;
+}
+
+/* ── Submit bar ───────────────────────────────────────────── */
+.hp-submit-wrap {
+	padding: 20px 0 40px;
+}
+
+.hp-submit-wrap .button-primary {
+	height: 40px;
+	line-height: 38px;
+	padding: 0 28px;
+	font-size: 14px;
+}
+
+/* ── Legacy — hide old elements ───────────────────────────── */
+.hp-divider {
+	display: none;
+}
+
+.hp-section-title {
+	display: none;
+}
+
+/* ── Utility ──────────────────────────────────────────────── */
 .hidden {
 	display: none !important;
 }

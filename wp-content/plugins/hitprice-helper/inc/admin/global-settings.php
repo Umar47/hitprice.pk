@@ -25,8 +25,8 @@ function hp_register_global_settings_menu() {
 
 	add_submenu_page(
 		'hitprice-settings',
-		__( 'HitPrice Settings', 'hitprice-helper' ),
-		__( 'Settings', 'hitprice-helper' ),
+		__( 'Single Product Page – Settings', 'hitprice-helper' ),
+		__( 'Single Product Page', 'hitprice-helper' ),
 		'manage_options',
 		'hitprice-settings',
 		'hp_render_global_settings_page'
@@ -236,8 +236,8 @@ function hp_render_global_settings_page() {
 		? $settings['trust_strip']
 		: $trust_strip_defaults;
 	?>
-	<div class="wrap hp-settings-wrap">
-		<h1><?php esc_html_e( 'HitPrice Settings', 'hitprice-helper' ); ?></h1>
+	<div class="wrap hp-settings-wrap hp-spp-settings">
+		<h1><?php esc_html_e( 'Single Product Page – Settings', 'hitprice-helper' ); ?></h1>
 
 		<?php if ( $saved ) : ?>
 			<div class="notice notice-success is-dismissible">
@@ -250,8 +250,11 @@ function hp_render_global_settings_page() {
 			<input type="hidden" name="action" value="hp_save_global_settings">
 
 			<!-- GALLERY ICONS -->
-			<h2 class="hp-section-title"><?php esc_html_e( 'Gallery Badge Overlays (Top Left / Top Right)', 'hitprice-helper' ); ?></h2>
-			<p class="description"><?php esc_html_e( 'Two circular badge images positioned on the gallery image. PTA badge only shows if "PTA Approved" is enabled on the product.', 'hitprice-helper' ); ?></p>
+			<div class="hp-card">
+				<div class="hp-card__header">
+					<h2 class="hp-card__title"><?php esc_html_e( 'Gallery Badge Overlays', 'hitprice-helper' ); ?></h2>
+					<p class="hp-card__desc"><?php esc_html_e( 'Two circular badge images shown on the gallery image. PTA badge only shows if "PTA Approved" is enabled on the product.', 'hitprice-helper' ); ?></p>
+				</div>
 
 			<table class="form-table">
 				<?php foreach ( array( 'pta' => __( 'PTA Approved (top-left)', 'hitprice-helper' ), 'best_price' => __( 'Best Price Guarantee (top-right)', 'hitprice-helper' ) ) as $gkey => $glabel ) :
@@ -285,11 +288,13 @@ function hp_render_global_settings_page() {
 				</tr>
 				<?php endforeach; ?>
 			</table>
+			</div><!-- .hp-card -->
 
-			<hr class="hp-divider">
-
-			<h2 class="hp-section-title"><?php esc_html_e( 'Gallery Trust Strip (Inside Gallery Card)', 'hitprice-helper' ); ?></h2>
-			<p class="description"><?php esc_html_e( 'Up to 4 icons shown in a row at the bottom of the gallery card. Each item has an icon, a title, and an optional subtitle.', 'hitprice-helper' ); ?></p>
+			<div class="hp-card">
+				<div class="hp-card__header">
+					<h2 class="hp-card__title"><?php esc_html_e( 'Gallery Trust Strip', 'hitprice-helper' ); ?></h2>
+					<p class="hp-card__desc"><?php esc_html_e( 'Up to 4 icons shown in a row at the bottom of the gallery card. Each item has an icon, a title, and an optional subtitle.', 'hitprice-helper' ); ?></p>
+				</div>
 
 			<div class="hp-icon-repeater" id="hp-gallery-bottom-repeater">
 				<?php foreach ( $gallery_bottom as $i => $row ) :
@@ -326,16 +331,18 @@ function hp_render_global_settings_page() {
 				<?php endforeach; ?>
 			</div>
 
-			<button type="button" class="button" id="hp-gbot-add-row" style="margin-top:10px;">
+			<button type="button" class="button hp-btn-add-row" id="hp-gbot-add-row">
 				<?php esc_html_e( '+ Add Icon', 'hitprice-helper' ); ?>
 			</button>
-			<p class="description" style="margin-top:6px;"><?php esc_html_e( 'Maximum 4 icons.', 'hitprice-helper' ); ?></p>
-
-			<hr class="hp-divider">
+			<p class="hp-card__note"><?php esc_html_e( 'Maximum 4 icons.', 'hitprice-helper' ); ?></p>
+			</div><!-- .hp-card -->
 
 			<!-- PRICE ICONS REPEATER -->
-			<h2 class="hp-section-title"><?php esc_html_e( 'Single Product Page Icons – After Product Price', 'hitprice-helper' ); ?></h2>
-			<p class="description"><?php esc_html_e( 'Up to 6 icons shown in a row below the product price. Each item has an icon image, a title, and an optional subtitle.', 'hitprice-helper' ); ?></p>
+			<div class="hp-card">
+				<div class="hp-card__header">
+					<h2 class="hp-card__title"><?php esc_html_e( 'After Product Price — Icons Row', 'hitprice-helper' ); ?></h2>
+					<p class="hp-card__desc"><?php esc_html_e( 'Up to 6 icons shown in a row below the product price. Each item has an icon image, a title, and an optional subtitle.', 'hitprice-helper' ); ?></p>
+				</div>
 
 			<div class="hp-icon-repeater" id="hp-icon-repeater">
 				<?php foreach ( $price_icons as $i => $row ) :
@@ -372,16 +379,18 @@ function hp_render_global_settings_page() {
 				<?php endforeach; ?>
 			</div>
 
-			<button type="button" class="button" id="hp-icon-add-row" style="margin-top:10px;">
+			<button type="button" class="button hp-btn-add-row" id="hp-icon-add-row">
 				<?php esc_html_e( '+ Add Icon', 'hitprice-helper' ); ?>
 			</button>
-			<p class="description" style="margin-top:6px;"><?php esc_html_e( 'Maximum 6 icons.', 'hitprice-helper' ); ?></p>
-
-			<hr class="hp-divider">
+			<p class="hp-card__note"><?php esc_html_e( 'Maximum 6 icons.', 'hitprice-helper' ); ?></p>
+			</div><!-- .hp-card -->
 
 			<!-- SALE BANNER -->
-			<h2 class="hp-section-title"><?php esc_html_e( 'Sale Banner', 'hitprice-helper' ); ?></h2>
-			<p class="description"><?php esc_html_e( 'Shows a banner above the icons row with a fire emoji, main text, and subtext.', 'hitprice-helper' ); ?></p>
+			<div class="hp-card">
+				<div class="hp-card__header">
+					<h2 class="hp-card__title"><?php esc_html_e( 'Sale Banner', 'hitprice-helper' ); ?></h2>
+					<p class="hp-card__desc"><?php esc_html_e( 'Shows a banner above the icons row with a fire emoji, main text, and subtext.', 'hitprice-helper' ); ?></p>
+				</div>
 			<table class="form-table">
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Enable Banner', 'hitprice-helper' ); ?></th>
@@ -403,14 +412,14 @@ function hp_render_global_settings_page() {
 					</td>
 				</tr>
 			</table>
-
-			<hr class="hp-divider">
+			</div><!-- .hp-card -->
 
 			<!-- VIEWERS RANGE -->
-			<h2 class="hp-section-title"><?php esc_html_e( 'Viewers Notice', 'hitprice-helper' ); ?></h2>
-			<p class="description">
-				<?php esc_html_e( 'Controls the "N people viewing this product" notice. Each product shows a consistent random number within this range, changing once per day.', 'hitprice-helper' ); ?>
-			</p>
+			<div class="hp-card">
+				<div class="hp-card__header">
+					<h2 class="hp-card__title"><?php esc_html_e( 'Viewers Notice', 'hitprice-helper' ); ?></h2>
+					<p class="hp-card__desc"><?php esc_html_e( 'Controls the "N people viewing this product" notice. Each product shows a consistent random number within this range, changing once per day.', 'hitprice-helper' ); ?></p>
+				</div>
 			<table class="form-table">
 				<tr>
 					<th scope="row">
@@ -439,12 +448,14 @@ function hp_render_global_settings_page() {
 					</td>
 				</tr>
 			</table>
-
-			<hr class="hp-divider">
+			</div><!-- .hp-card -->
 
 			<!-- WHY BUY SECTION -->
-			<h2 class="hp-section-title"><?php esc_html_e( 'Single Product Page – Before Key Highlights Section', 'hitprice-helper' ); ?></h2>
-			<p class="description"><?php esc_html_e( '"Why buy from Hitprice.pk?" row — shown after the product layout, before Key Highlights. Up to 5 items with icon, title, and description.', 'hitprice-helper' ); ?></p>
+			<div class="hp-card">
+				<div class="hp-card__header">
+					<h2 class="hp-card__title"><?php esc_html_e( 'Why Buy Strip — Before Key Highlights', 'hitprice-helper' ); ?></h2>
+					<p class="hp-card__desc"><?php esc_html_e( '"Why buy from Hitprice.pk?" row — shown after the product layout, before Key Highlights. Up to 5 items with icon, title, and description.', 'hitprice-helper' ); ?></p>
+				</div>
 			<table class="form-table">
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Enable Section', 'hitprice-helper' ); ?></th>
@@ -501,29 +512,30 @@ function hp_render_global_settings_page() {
 				<?php endforeach; ?>
 			</div>
 
-			<button type="button" class="button" id="hp-wb-add-row" style="margin-top:10px;">
+			<button type="button" class="button hp-btn-add-row" id="hp-wb-add-row">
 				<?php esc_html_e( '+ Add Item', 'hitprice-helper' ); ?>
 			</button>
-			<p class="description" style="margin-top:6px;"><?php esc_html_e( 'Maximum 5 items.', 'hitprice-helper' ); ?></p>
-
-			<hr class="hp-divider">
+			<p class="hp-card__note"><?php esc_html_e( 'Maximum 5 items.', 'hitprice-helper' ); ?></p>
+			</div><!-- .hp-card -->
 
 			<!-- BOTTOM TRUST STRIP -->
-			<h2 class="hp-section-title"><?php esc_html_e( 'Single Product Page – Bottom Trust Strip', 'hitprice-helper' ); ?></h2>
-			<p class="description"><?php esc_html_e( 'Exactly 4 items shown in a horizontal strip below the product tabs. Use Font Awesome class names for icons (e.g. fa-solid fa-shield-halved).', 'hitprice-helper' ); ?></p>
+			<div class="hp-card">
+				<div class="hp-card__header">
+					<h2 class="hp-card__title"><?php esc_html_e( 'Bottom Trust Strip', 'hitprice-helper' ); ?></h2>
+					<p class="hp-card__desc"><?php esc_html_e( 'Exactly 4 items shown in a horizontal strip below the product tabs. Use Font Awesome class names for icons (e.g. fa-solid fa-shield-halved).', 'hitprice-helper' ); ?></p>
+				</div>
 
-			<table class="form-table">
-				<?php foreach ( $trust_strip_items as $i => $row ) :
-					$ic  = esc_attr( $row['icon_class'] ?? '' );
-					$ttl = esc_attr( $row['title'] ?? '' );
-					$sub = esc_attr( $row['subtitle'] ?? '' );
-				?>
-				<tr>
-					<th scope="row"><?php printf( esc_html__( 'Item %d', 'hitprice-helper' ), $i + 1 ); ?></th>
-					<td>
-						<div style="display:flex;flex-direction:column;gap:8px;max-width:600px;">
+				<div class="hp-trust-strip-repeater">
+					<?php foreach ( $trust_strip_items as $i => $row ) :
+						$ic  = esc_attr( $row['icon_class'] ?? '' );
+						$ttl = esc_attr( $row['title'] ?? '' );
+						$sub = esc_attr( $row['subtitle'] ?? '' );
+					?>
+					<div class="hp-trust-strip-row">
+						<span class="hp-trust-strip-row__num"><?php printf( esc_html__( 'Item %d', 'hitprice-helper' ), $i + 1 ); ?></span>
+						<div class="hp-trust-strip-row__fields">
 							<label>
-								<span style="display:inline-block;width:80px;font-weight:600;"><?php esc_html_e( 'Icon Class', 'hitprice-helper' ); ?></span>
+								<?php esc_html_e( 'Icon Class', 'hitprice-helper' ); ?>
 								<input type="text"
 									name="hp_trust_strip[<?php echo esc_attr( $i ); ?>][icon_class]"
 									value="<?php echo $ic; ?>"
@@ -531,15 +543,15 @@ function hp_render_global_settings_page() {
 									placeholder="fa-solid fa-shield-halved">
 							</label>
 							<label>
-								<span style="display:inline-block;width:80px;font-weight:600;"><?php esc_html_e( 'Title', 'hitprice-helper' ); ?></span>
+								<?php esc_html_e( 'Title', 'hitprice-helper' ); ?>
 								<input type="text"
 									name="hp_trust_strip[<?php echo esc_attr( $i ); ?>][title]"
 									value="<?php echo $ttl; ?>"
 									class="regular-text"
 									placeholder="<?php esc_attr_e( 'e.g. Safe & Secure Payments', 'hitprice-helper' ); ?>">
 							</label>
-							<label>
-								<span style="display:inline-block;width:80px;font-weight:600;"><?php esc_html_e( 'Subtitle', 'hitprice-helper' ); ?></span>
+							<label class="hp-trust-strip-row__subtitle">
+								<?php esc_html_e( 'Subtitle', 'hitprice-helper' ); ?>
 								<input type="text"
 									name="hp_trust_strip[<?php echo esc_attr( $i ); ?>][subtitle]"
 									value="<?php echo $sub; ?>"
@@ -547,34 +559,34 @@ function hp_render_global_settings_page() {
 									placeholder="<?php esc_attr_e( 'e.g. Your payment information is 100% secure.', 'hitprice-helper' ); ?>">
 							</label>
 						</div>
-					</td>
-				</tr>
-				<?php endforeach; ?>
-			</table>
-
-			<hr class="hp-divider">
+					</div>
+					<?php endforeach; ?>
+				</div>
+			</div><!-- .hp-card -->
 
 			<!-- SHIPPING POLICY -->
-			<h2 class="hp-section-title"><?php esc_html_e( 'Shipping & Returns Policy', 'hitprice-helper' ); ?></h2>
-			<p class="description">
-				<?php esc_html_e( 'Shown in the "Shipping & Returns" tab on all product pages.', 'hitprice-helper' ); ?>
-			</p>
-			<?php
-			wp_editor(
-				wp_kses_post( $settings['shipping_policy'] ?? '' ),
-				'hp_shipping_policy',
-				[
-					'textarea_name' => 'hp_shipping_policy',
-					'media_buttons' => false,
-					'teeny'         => false,
-					'textarea_rows' => 12,
-				]
-			);
-			?>
+			<div class="hp-card">
+				<div class="hp-card__header">
+					<h2 class="hp-card__title"><?php esc_html_e( 'Shipping & Returns Policy', 'hitprice-helper' ); ?></h2>
+					<p class="hp-card__desc"><?php esc_html_e( 'Shown in the "Shipping & Returns" tab on all product pages.', 'hitprice-helper' ); ?></p>
+				</div>
+				<?php
+				wp_editor(
+					wp_kses_post( $settings['shipping_policy'] ?? '' ),
+					'hp_shipping_policy',
+					[
+						'textarea_name' => 'hp_shipping_policy',
+						'media_buttons' => false,
+						'teeny'         => false,
+						'textarea_rows' => 12,
+					]
+				);
+				?>
+			</div><!-- .hp-card -->
 
-			<p class="submit" style="margin-top:20px;">
-				<?php submit_button( __( 'Save Settings', 'hitprice-helper' ), 'primary', 'submit', false ); ?>
-			</p>
+			<div class="hp-submit-wrap">
+				<?php submit_button( __( 'Save Settings', 'hitprice-helper' ), 'primary large', 'submit', false ); ?>
+			</div>
 		</form>
 	</div>
 	<?php
