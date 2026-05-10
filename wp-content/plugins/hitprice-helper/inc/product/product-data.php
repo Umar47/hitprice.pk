@@ -238,6 +238,29 @@ function hp_get_product_trust_strip_items() {
 }
 
 /**
+ * Returns payment methods strip items (up to 3) from global settings,
+ * falling back to the default hardcoded set.
+ *
+ * @return array<int, array{ image_id: int, image_url: string, title: string, subtitle: string }>
+ */
+function hp_get_payment_methods() {
+	$settings = get_option( 'hp_global_settings', [] );
+	$items    = isset( $settings['payment_methods'] ) && is_array( $settings['payment_methods'] )
+		? $settings['payment_methods']
+		: [];
+
+	if ( empty( $items ) ) {
+		return [
+			[ 'icon_class' => 'fa-regular fa-credit-card', 'title' => 'Cash on Delivery',    'subtitle' => 'Pay when you receive' ],
+			[ 'icon_class' => 'fa-solid fa-box-open',       'title' => 'Open Parcel',          'subtitle' => 'Check before you pay' ],
+			[ 'icon_class' => 'fa-solid fa-shield-halved',  'title' => '7-Day Check Warranty', 'subtitle' => 'Free return & replacement' ],
+		];
+	}
+
+	return array_slice( $items, 0, 3 );
+}
+
+/**
  * Returns the ordered badge key → default label map.
  *
  * Moved from global-settings.php so these data helpers are available on

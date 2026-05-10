@@ -168,6 +168,21 @@ function hp_save_global_settings() {
 	}
 	$settings['trust_strip'] = $trust_strip;
 
+	// Payment methods strip (up to 3 items).
+	$raw_pm          = isset( $_POST['hp_payment_methods'] ) && is_array( $_POST['hp_payment_methods'] ) ? $_POST['hp_payment_methods'] : [];
+	$payment_methods = [];
+	foreach ( array_slice( $raw_pm, 0, 3 ) as $row ) {
+		if ( empty( $row['title'] ) ) {
+			continue;
+		}
+		$payment_methods[] = [
+			'icon_class' => sanitize_text_field( $row['icon_class'] ?? '' ),
+			'title'      => sanitize_text_field( $row['title'] ),
+			'subtitle'   => sanitize_text_field( $row['subtitle'] ?? '' ),
+		];
+	}
+	$settings['payment_methods'] = $payment_methods;
+
 	// Shipping policy.
 	$settings['shipping_policy'] = wp_kses_post( wp_unslash( $_POST['hp_shipping_policy'] ?? '' ) );
 	/* phpcs:enable */
@@ -224,6 +239,16 @@ function hp_render_global_settings_page() {
 	if ( empty( $why_buy_items ) ) {
 		$why_buy_items = [ [ 'image_id' => 0, 'image_url' => '', 'title' => '', 'description' => '' ] ];
 	}
+
+	// Payment methods strip items.
+	$payment_methods_defaults = [
+		[ 'icon_class' => 'fa-regular fa-credit-card', 'title' => 'Cash on Delivery',    'subtitle' => 'Pay when you receive' ],
+		[ 'icon_class' => 'fa-solid fa-box-open',       'title' => 'Open Parcel',          'subtitle' => 'Check before you pay' ],
+		[ 'icon_class' => 'fa-solid fa-shield-halved',  'title' => '7-Day Check Warranty', 'subtitle' => 'Free return & replacement' ],
+	];
+	$payment_methods = ( isset( $settings['payment_methods'] ) && is_array( $settings['payment_methods'] ) && ! empty( $settings['payment_methods'] ) )
+		? $settings['payment_methods']
+		: $payment_methods_defaults;
 
 	// Bottom trust strip items.
 	$trust_strip_defaults = [
@@ -383,6 +408,57 @@ function hp_render_global_settings_page() {
 				<?php esc_html_e( '+ Add Icon', 'hitprice-helper' ); ?>
 			</button>
 			<p class="hp-card__note"><?php esc_html_e( 'Maximum 6 icons.', 'hitprice-helper' ); ?></p>
+			</div><!-- .hp-card -->
+
+			<!-- PAYMENT METHODS STRIP -->
+			<div class="hp-card">
+				<div class="hp-card__header">
+					<h2 class="hp-card__title"><?php esc_html_e( 'After add to cart button — Icons Row', 'hitprice-helper' ); ?></h2>
+					<p class="hp-card__desc"><?php esc_html_e( 'Up to 3 icons shown below the Add to Cart button (Cash on Delivery, Open Parcel, Warranty, etc.). Each item has an icon image, title, and subtitle.', 'hitprice-helper' ); ?></p>
+				</div>
+
+			<div class="hp-trust-strip-repeater" id="hp-pm-repeater">
+				<?php foreach ( $payment_methods as $i => $row ) :
+					$ic    = esc_attr( $row['icon_class'] ?? '' );
+					$title = esc_attr( $row['title'] ?? '' );
+					$sub   = esc_attr( $row['subtitle'] ?? '' );
+				?>
+				<div class="hp-trust-strip-row hp-pm-row">
+					<span class="hp-trust-strip-row__num"><?php printf( esc_html__( 'Item %d', 'hitprice-helper' ), $i + 1 ); ?></span>
+					<div class="hp-trust-strip-row__fields">
+						<label>
+							<?php esc_html_e( 'Icon Class', 'hitprice-helper' ); ?>
+							<input type="text"
+								name="hp_payment_methods[<?php echo esc_attr( $i ); ?>][icon_class]"
+								value="<?php echo $ic; ?>"
+								class="regular-text"
+								placeholder="fa-regular fa-credit-card">
+						</label>
+						<label>
+							<?php esc_html_e( 'Title', 'hitprice-helper' ); ?>
+							<input type="text"
+								name="hp_payment_methods[<?php echo esc_attr( $i ); ?>][title]"
+								value="<?php echo $title; ?>"
+								class="regular-text"
+								placeholder="<?php esc_attr_e( 'e.g. Cash on Delivery', 'hitprice-helper' ); ?>">
+						</label>
+						<label class="hp-trust-strip-row__subtitle">
+							<?php esc_html_e( 'Subtitle', 'hitprice-helper' ); ?>
+							<input type="text"
+								name="hp_payment_methods[<?php echo esc_attr( $i ); ?>][subtitle]"
+								value="<?php echo $sub; ?>"
+								class="widefat"
+								placeholder="<?php esc_attr_e( 'e.g. Pay when you receive', 'hitprice-helper' ); ?>">
+						</label>
+					</div>
+				</div>
+				<?php endforeach; ?>
+			</div>
+
+			<button type="button" class="button hp-btn-add-row" id="hp-pm-add-row">
+				<?php esc_html_e( '+ Add Icon', 'hitprice-helper' ); ?>
+			</button>
+			<p class="hp-card__note"><?php esc_html_e( 'Maximum 3 icons.', 'hitprice-helper' ); ?></p>
 			</div><!-- .hp-card -->
 
 			<!-- SALE BANNER -->

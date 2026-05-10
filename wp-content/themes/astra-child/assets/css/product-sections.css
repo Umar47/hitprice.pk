@@ -42,10 +42,8 @@
 }
 
 .hp-product-layout .summary .quantity .qty {
-	width: 72px;
+	width: 50px;
 	padding: 10px 8px;
-	border: 1px solid #ccc;
-	border-radius: 8px;
 	font-size: 15px;
 	text-align: center;
 }
@@ -825,7 +823,7 @@
 	border-radius: 12px;
 	padding: 0;
 	margin: 0 0 16px;
-	background: #fff;
+	background-color: #f0f6fe;
 	overflow: hidden;
 }
 
@@ -836,7 +834,7 @@
 	text-align: left;
 	gap: 10px;
 	padding: 12px 14px;
-	min-height: 72px;
+	min-height: 50px;
 }
 
 .hp-payment-method + .hp-payment-method {
@@ -894,6 +892,7 @@
 	color: #1a5c38;
 	margin: 0 0 8px;
 	line-height: 1.4;
+	justify-content: center;
 }
 
 .hp-delivery-estimate__icon {

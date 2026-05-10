@@ -105,8 +105,10 @@ function hitprice_register_product_hooks() {
 	add_action( 'astra_woo_single_add_to_cart_before', 'hp_render_sale_banner',           5 );
 	add_action( 'astra_woo_single_add_to_cart_before', 'hp_render_summary_trust_badges', 10 );
 	// WC variations + add-to-cart stays at priority 30.
-	// Buy Now button rendered inside .cart form after ATC button.
-	add_action( 'woocommerce_after_add_to_cart_button', 'hp_render_buy_now_button' );
+	// Wrap qty + ATC + Buy Now in a single flex row.
+	add_action( 'woocommerce_before_add_to_cart_quantity', 'hp_open_product_actions_row',   1 );
+	add_action( 'woocommerce_after_add_to_cart_button',    'hp_render_buy_now_button',     10 );
+	add_action( 'woocommerce_after_add_to_cart_button',    'hp_close_product_actions_row', 99 );
 	add_action( 'woocommerce_single_product_summary', 'hp_render_payment_methods',        55 );
 	add_action( 'woocommerce_single_product_summary', 'hp_render_delivery_estimate',      60 );
 
@@ -251,6 +253,16 @@ function hp_render_sale_banner() {
 /** Trust badges row: PTA (conditional per product), Genuine, Best Price, Weekly Deals. */
 function hp_render_summary_trust_badges() {
 	hitprice_get_template_part( 'template-parts/product/trust-badges' );
+}
+
+/** Opens the single purchase-action flex row (qty + ATC + Buy Now). */
+function hp_open_product_actions_row() {
+	echo '<div class="hp-product-actions-row">';
+}
+
+/** Closes the purchase-action flex row. */
+function hp_close_product_actions_row() {
+	echo '</div>';
 }
 
 /**

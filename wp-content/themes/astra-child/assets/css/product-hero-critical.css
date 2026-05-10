@@ -191,51 +191,152 @@ body.single-product .ast-primary-content,body.single-product .ast-woocommerce-co
   border-radius:8px;font-size:14px;background:#fff;
 }
 
-/* ── Cart form (qty + ATC + Buy Now) ────────────────────────── */
+/* ── Cart form — let WooCommerce own the outer layout ──────────── */
 .hp-product-layout .summary .cart{
-  display:flex;flex-wrap:wrap;gap:12px;align-items:stretch;
-  margin:0 0 14px;
+  margin:0;
 }
-.hp-product-layout .summary .cart .quantity{flex-shrink:0;}
-.hp-product-layout .summary .cart .single_add_to_cart_button{
-  flex:1;min-width:130px;
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  background:#0a5bff;color:#fff;border:none;border-radius:10px;
-  padding:0 20px;height:48px;
-  font-size:15px;font-weight:600;line-height:1;cursor:pointer;
-  transition:background .18s,box-shadow .18s;
-}
-.hp-product-layout .summary .cart .single_add_to_cart_button:hover{background:#0049d8;box-shadow:0 10px 24px rgba(10,91,255,.18);}
-.hp-buy-now-btn{
-  flex:1;min-width:130px;
-  display:inline-flex;align-items:center;justify-content:center;
-  border:1.5px solid #90b7ff;color:#0a5bff;background:#fff;
-  border-radius:10px;height:48px;padding:0 20px;
-  font-size:15px;font-weight:600;cursor:pointer;
-  text-decoration:none;transition:background .18s,color .18s;line-height:1;
-}
-.hp-buy-now-btn:hover{background:#0a5bff;color:#fff;}
 
-/* Quantity +/- (JS-enhanced — hp-qty-wrap wraps native .qty) */
+/* Neutralise Astra's flex on the variation add-to-cart wrapper so our
+   hp-product-actions-row (single child) just fills it naturally. */
+.hp-product-layout .summary .woocommerce-variation-add-to-cart{
+  display:block !important;
+}
+
+/* ── Single purchase-action row ────────────────────────────────── */
+.hp-product-actions-row{
+  display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
+  align-items:stretch;
+  gap:10px;
+  margin:0;
+}
+
+/* .quantity wrapper from WooCommerce — collapse so hp-qty-wrap is the flex child */
+.hp-product-actions-row .quantity{
+  display:contents;
+}
+
+/* ── Qty selector ──────────────────────────────────────────────── */
 .hp-qty-wrap{
-  display:inline-flex;align-items:center;
-  border:1px solid #d9e1ef;border-radius:10px;overflow:hidden;
-  height:48px;
+  display:flex;
+  flex-direction:row;
+  align-items:stretch;
+  flex-shrink:0;
+  width:132px;
+  height:52px;
+  box-sizing:border-box;
+  border:1.5px solid #d0d7e3;
+  border-radius:12px;
+  overflow:hidden;
+  background:#fff;
 }
+
 .hp-qty-btn{
-  width:40px;height:100%;background:#fff;border:none;
-  font-size:20px;font-weight:400;cursor:pointer;color:#334155;line-height:1;
-  transition:background .12s;flex-shrink:0;
+  flex:1;
+  height:100%;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
+  border:none;
+  padding:0;
+  margin:0;
+  font-size:20px;
+  font-weight:400;
+  line-height:1;
+  color:#334155;
+  cursor:pointer;
+  flex-shrink:0;
+  transition:background .12s;
 }
-.hp-qty-btn:hover{background:#f8fafc;}
+.hp-qty-btn:hover{background:#f0f4ff;border-radius:0;}
+
 .hp-qty-wrap .qty{
-  width:52px;height:100%;border:none;
-  border-left:1px solid #d9e1ef;border-right:1px solid #d9e1ef;
-  font-size:15px;font-weight:500;text-align:center;padding:0;
-  -moz-appearance:textfield;background:#fff;
+  flex:1;
+  height:100%;
+  box-sizing:border-box;
+  display:block;
+  border:none;
+  border-left:1.5px solid #d0d7e3;
+  border-right:1.5px solid #d0d7e3;
+  padding:10px 8px;
+  margin:0;
+  width:50px;
+  font-size:15px;
+  font-weight:600;
+  line-height:1;
+  text-align:center;
+  background:#fff;
+  color:#1a1a2e;
+  -moz-appearance:textfield;
 }
 .hp-qty-wrap .qty::-webkit-outer-spin-button,
 .hp-qty-wrap .qty::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+
+/* ── Add to Cart — hard-reset Astra/WooCommerce sizing ────────── */
+.hp-product-actions-row .single_add_to_cart_button,
+.hp-product-actions-row .single_add_to_cart_button.button,
+.hp-product-actions-row button.button.alt{
+  flex:1;
+  min-width:0;
+  width:auto !important;
+  height:52px !important;
+  min-height:unset !important;
+  box-sizing:border-box;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:0 22px !important;
+  margin:0;
+  border:none !important;
+  border-radius:12px !important;
+  background:#0a5bff !important;
+  color:#fff !important;
+  font-size:16px !important;
+  font-weight:600 !important;
+  line-height:1 !important;
+  letter-spacing:0;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:background .18s, box-shadow .18s;
+  text-transform:none !important;
+  vertical-align:top;
+}
+.hp-product-actions-row .single_add_to_cart_button:hover{
+  background:#0049d8 !important;
+  box-shadow:0 8px 22px rgba(10,91,255,.22);
+}
+
+/* ── Buy Now ───────────────────────────────────────────────────── */
+.hp-buy-now-btn{
+  flex:0 0 auto;
+  width:160px;
+  height:52px;
+  min-height:unset;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 22px;
+  margin:0;
+  border:1.5px solid #0a5bff;
+  border-radius:12px;
+  background:#fff;
+  color:#0a5bff;
+  font-size:16px;
+  font-weight:600;
+  line-height:1;
+  letter-spacing:0;
+  cursor:pointer;
+  white-space:nowrap;
+  text-decoration:none;
+  transition:background .18s, color .18s;
+  text-transform:none;
+}
+.hp-buy-now-btn:hover{background:#0a5bff;color:#fff;}
 
 /* ── Mobile (≤ 767px) ───────────────────────────────────────── */
 @media(max-width:767px){
@@ -261,8 +362,10 @@ body.single-product .ast-primary-content,body.single-product .ast-woocommerce-co
   .hp-price-icons{grid-template-columns:repeat(2,1fr);}
   .hp-price-icon:nth-child(2n+1){border-left:none;}
   .hp-price-icon:nth-child(n+3){border-top:1px solid #e2e8f0;}
-  /* CTA: Buy Now full-width on its own row */
-  .hp-buy-now-btn{flex:none;width:100%;flex-basis:100%;}
+  /* Mobile: Buy Now drops to its own full-width row */
+  .hp-product-actions-row{flex-wrap:wrap;}
+  .hp-product-actions-row .single_add_to_cart_button{flex:1;min-width:140px;}
+  .hp-buy-now-btn{flex:none !important;width:100% !important;}
 }
 @media(max-width:480px){
   .hp-product-layout .summary .product_title{font-size:18px;}

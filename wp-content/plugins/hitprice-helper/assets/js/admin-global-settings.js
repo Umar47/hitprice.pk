@@ -5,6 +5,7 @@
 	var MAX_ROWS        = 6;
 	var MAX_GALLERY_BOT = 4;
 	var MAX_WHY_BUY     = 5;
+	var MAX_PM          = 3;
 
 	function getRowIndex() {
 		return $( '#hp-icon-repeater .hp-icon-row' ).length;
@@ -261,5 +262,32 @@
 		}
 
 		toggleAddBtn();
+
+		// ── Payment methods repeater ─────────────────────────────────────────
+		var $pmRepeater = $( '#hp-pm-repeater' );
+		var $pmAddBtn   = $( '#hp-pm-add-row' );
+
+		$pmAddBtn.on( 'click', function () {
+			if ( $( '#hp-pm-repeater .hp-pm-row' ).length >= MAX_PM ) { return; }
+			var i    = $( '#hp-pm-repeater .hp-pm-row' ).length;
+			var $row = $(
+				'<div class="hp-trust-strip-row hp-pm-row">' +
+					'<span class="hp-trust-strip-row__num">Item ' + ( i + 1 ) + '</span>' +
+					'<div class="hp-trust-strip-row__fields">' +
+						'<label>Icon Class<input type="text" name="hp_payment_methods[' + i + '][icon_class]" value="" class="regular-text" placeholder="fa-regular fa-credit-card"></label>' +
+						'<label>Title<input type="text" name="hp_payment_methods[' + i + '][title]" value="" class="regular-text" placeholder="e.g. Cash on Delivery"></label>' +
+						'<label class="hp-trust-strip-row__subtitle">Subtitle<input type="text" name="hp_payment_methods[' + i + '][subtitle]" value="" class="widefat" placeholder="e.g. Pay when you receive"></label>' +
+					'</div>' +
+				'</div>'
+			);
+			$pmRepeater.append( $row );
+			togglePmBtn();
+		} );
+
+		function togglePmBtn() {
+			$pmAddBtn.prop( 'disabled', $( '#hp-pm-repeater .hp-pm-row' ).length >= MAX_PM );
+		}
+
+		togglePmBtn();
 	} );
 } )( jQuery );
