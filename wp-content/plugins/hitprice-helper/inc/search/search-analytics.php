@@ -10,13 +10,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Normalize a search term for grouping (lowercase, collapse whitespace).
+ * Normalize a search term for grouping and matching.
+ *
+ * Lowercases, strips tags, converts hyphens/underscores to spaces,
+ * collapses whitespace, and trims. This means "samsung-s24" and
+ * "samsung s24" normalize to the same string.
  *
  * @param string $term Raw term.
  * @return string
  */
 function hp_search_normalize_term( $term ) {
 	$term = strtolower( wp_strip_all_tags( (string) $term ) );
+	$term = str_replace( array( '-', '_' ), ' ', $term );
 	$term = preg_replace( '/\s+/', ' ', $term );
 	return trim( $term );
 }

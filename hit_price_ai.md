@@ -204,6 +204,46 @@ Build a fast, clean, modern WooCommerce store focused on sales conversion.
   - `product-sections.css`: added `375px` breakpoint (tab buttons 12px 10px padding, sections 28px padding, trust strip single-column, related cards 160px, why-choose tighter)
 - **Verified:** critical CSS inline confirmed active in `theme-setup.php` (`wp_head` priority 99); sections CSS deferred via `media='print'` + `onload` confirmed in `hitprice_deferred_product_css_onload()` filter
 
+## Live Search Completion (2026-05-13)
+
+- Removed `is_admin()` guard from `hp_search_maybe_upgrade()` so the analytics DB table is auto-created on the first REST request — previously it only ran on wp-admin pages
+- Improved `hp_search_normalize_term()` to convert hyphens and underscores to spaces before normalizing, so `samsung-s24` and `samsung s24` resolve to the same term
+- Added a 7th search pass (split-word intersection): multi-word queries like "s24 ultra" now match "Samsung Galaxy S24 Ultra" by requiring each individual word to appear in the title; added `hp_search_split_words()` helper
+- Extended `hp_search_format_products()` to return `category` (primary product category name via `get_category_ids()` + `get_term()`) and `in_stock` (bool) per product
+- Changed REST suggest response cache header from `no-store` to `private, max-age=30` — browser reuses identical queries for 30 s, server transient cache covers 5 min
+- Increased JS debounce from 160ms to 250ms to reduce request volume on fast typing
+- Added `focus` event listener on header `<input>` triggers so keyboard users open the overlay without needing to click
+- Added explicit `keydown` Enter handler on overlay input to save the term to recent searches before the form submits (form itself handles the redirect natively)
+- Added `overlayForm` submit listener as a clean hook for recent-search persistence
+- Added recent searches system (localStorage key `hp_recent_searches`, max 5 terms): rendered in idle state above trending chips; saved on successful product results; updated on Enter; cleared by "Clear" button
+- Added "Clear recent" delegated handler in overlay click dispatcher
+- Added `[data-hp-search-recent]` + `[data-hp-search-recent-list]` section to `overlay.php` with heading row + Clear button
+- Extended `renderProducts()` to show: category label pill, out-of-stock badge, highlighted matched term in title (`<mark class="hp-search-highlight">`)
+- Added `highlightTerm()` helper that highlights each word of the query inside the escaped title string using a safe regex
+- Improved product card image fallback: inline SVG placeholder via CSS background instead of empty `<img>`
+- Added all supporting CSS: recent section, heading-row flex, clear-recent button, chip--recent variant with clock icon, category pill, stock badge, highlight mark, image placeholder
+
+### Files Changed
+- `wp-content/plugins/hitprice-helper/inc/search/search-install.php`
+- `wp-content/plugins/hitprice-helper/inc/search/search-analytics.php`
+- `wp-content/plugins/hitprice-helper/inc/search/search-query.php`
+- `wp-content/plugins/hitprice-helper/inc/search/search-rest.php`
+- `wp-content/themes/astra-child/assets/js/search.js`
+- `wp-content/themes/astra-child/assets/css/search.css`
+- `wp-content/themes/astra-child/template-parts/search/overlay.php`
+
+## Search Idle State Fix (2026-05-13)
+
+- **Root cause fixed:** Astra's CSS reset removes the browser's native `[hidden]{display:none}` rule, causing loading/empty/error states to all show simultaneously on open. Fixed by adding `.hp-search-overlay [hidden] { display: none !important; }` scoped to the overlay.
+- Added pre-rendered "Popular products" grid to overlay idle state — queries latest 6 published visible products via `wc_get_products()` in PHP at footer render time (no AJAX call, instant display).
+- Featured products section (`data-hp-search-featured`) hidden whenever user starts typing (showLoading / showResults / showEmpty / showError all call `hide(featuredSec)`), restored by `showIdle()` when input is cleared.
+- Added `featuredSec` element reference in search.js and wired into all view-state functions.
+
+### Files Changed
+- `wp-content/themes/astra-child/assets/css/search.css`
+- `wp-content/themes/astra-child/assets/js/search.js`
+- `wp-content/themes/astra-child/template-parts/search/overlay.php`
+
 ## Next Tasks
 - Visual QA on live product page — test variable products, sticky nav, star breakdown, review image upload, responsive layout at all breakpoints
 - Populate Global Settings badges (safe_payments, easy_returns, customer_support, satisfaction, genuine, best_price) with real icons and labels so trust strips render

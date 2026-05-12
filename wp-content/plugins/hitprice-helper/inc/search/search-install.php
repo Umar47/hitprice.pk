@@ -66,12 +66,11 @@ function hp_search_activate() {
 }
 
 /**
- * Run install if version mismatch detected on load (admin only).
+ * Run install if version mismatch detected on load.
+ * Runs on every request (cheap option check) so the table exists before
+ * the first REST API call even if the activation hook never fired.
  */
 function hp_search_maybe_upgrade() {
-	if ( ! is_admin() ) {
-		return;
-	}
 	if ( get_option( HP_SEARCH_DB_OPTION ) !== HP_SEARCH_DB_VERSION ) {
 		hp_search_install_table();
 	}

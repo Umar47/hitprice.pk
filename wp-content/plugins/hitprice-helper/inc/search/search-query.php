@@ -31,7 +31,8 @@ function hp_search_cache_key( $normalized, $limit, $context ) {
  *   3. Title LIKE (contains)
  *   4. SKU exact / partial
  *   5. Tag and category match
- *   6. Content / excerpt fallback
+ *   6. Split-word intersection (every word appears in title)
+ *   7. Content / excerpt fallback
  *
  * @param string $term    Raw search term.
  * @param int    $limit   Max results.
@@ -156,8 +157,37 @@ function hp_search_products( $term, $limit = 6, $context = 'suggest' ) {
 		return hp_search_finalize_ids( $ids, $limit, $cache_key );
 	}
 
-	// Pass 6: content / excerpt fallback.
-	$pass6 = $wpdb->get_col(
+	// Pass 6: split-word intersection — every word in the query must appear in the title.
+	// Handles "s24 ultra" matching "Samsung Galaxy S24 Ultra".
+	$words = hp_search_split_words( $normalized );
+	if ( count( $words ) >= 2 ) {
+		$where_parts = array();
+		$args        = array();
+		foreach ( $words as $word ) {
+			$where_parts[] = 'p.post_title LIKE %s';
+			$args[]        = '%' . $wpdb->esc_like( $word ) . '%';
+		}
+		$args[]   = $max_fetch;
+		$where_sql = implode( ' AND ', $where_parts );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$pass6 = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT p.ID FROM {$wpdb->posts} p
+				WHERE p.post_type = 'product' AND {$post_status}
+					AND ({$where_sql})
+				ORDER BY p.menu_order ASC, p.post_date DESC
+				LIMIT %d",
+				$args
+			)
+		);
+		$ids = hp_search_merge_ids( $ids, $pass6, $limit );
+		if ( count( $ids ) >= $limit ) {
+			return hp_search_finalize_ids( $ids, $limit, $cache_key );
+		}
+	}
+
+	// Pass 7: content / excerpt fallback.
+	$pass7 = $wpdb->get_col(
 		$wpdb->prepare(
 			"SELECT p.ID FROM {$wpdb->posts} p
 			WHERE p.post_type = 'product' AND {$post_status}
@@ -169,9 +199,27 @@ function hp_search_products( $term, $limit = 6, $context = 'suggest' ) {
 			$max_fetch
 		)
 	);
-	$ids = hp_search_merge_ids( $ids, $pass6, $limit );
+	$ids = hp_search_merge_ids( $ids, $pass7, $limit );
 
 	return hp_search_finalize_ids( $ids, $limit, $cache_key );
+}
+
+/**
+ * Split a normalized term into meaningful words (min 2 chars each).
+ *
+ * @param string $normalized Already-normalized term.
+ * @return string[]
+ */
+function hp_search_split_words( $normalized ) {
+	$words = preg_split( '/\s+/', $normalized, -1, PREG_SPLIT_NO_EMPTY );
+	return array_values(
+		array_filter(
+			$words,
+			static function ( $w ) {
+				return mb_strlen( $w ) >= 2;
+			}
+		)
+	);
 }
 
 /**
@@ -274,16 +322,28 @@ function hp_search_format_products( $product_ids ) {
 		if ( ! $product instanceof WC_Product ) {
 			continue;
 		}
+
 		$image_id  = (int) $product->get_image_id();
 		$thumb_url = $image_id ? wp_get_attachment_image_url( $image_id, 'woocommerce_gallery_thumbnail' ) : '';
 		if ( ! $thumb_url ) {
 			$thumb_url = function_exists( 'wc_placeholder_img_src' ) ? wc_placeholder_img_src( 'woocommerce_gallery_thumbnail' ) : '';
 		}
+
+		// Primary category name (cheapest: already loaded via term cache).
+		$category = '';
+		$cat_ids  = $product->get_category_ids();
+		if ( ! empty( $cat_ids ) ) {
+			$term = get_term( (int) $cat_ids[0], 'product_cat' );
+			if ( $term instanceof WP_Term ) {
+				$category = $term->name;
+			}
+		}
+
 		$out[] = array(
-			'id'    => (int) $product->get_id(),
-			'title' => wp_strip_all_tags( $product->get_name() ),
-			'url'   => get_permalink( $product->get_id() ),
-			'price' => wp_kses(
+			'id'       => (int) $product->get_id(),
+			'title'    => wp_strip_all_tags( $product->get_name() ),
+			'url'      => get_permalink( $product->get_id() ),
+			'price'    => wp_kses(
 				$product->get_price_html(),
 				array(
 					'del'  => array( 'aria-hidden' => array() ),
@@ -292,8 +352,10 @@ function hp_search_format_products( $product_ids ) {
 					'bdi'  => array(),
 				)
 			),
-			'image' => esc_url_raw( $thumb_url ),
-			'sku'   => (string) $product->get_sku(),
+			'image'    => esc_url_raw( $thumb_url ),
+			'sku'      => (string) $product->get_sku(),
+			'category' => $category,
+			'in_stock' => $product->is_in_stock(),
 		);
 	}
 	return $out;

@@ -144,7 +144,9 @@ function hp_search_rest_suggest( WP_REST_Request $request ) {
 			'terms'    => $terms,
 		)
 	);
-	$response->header( 'Cache-Control', 'private, max-age=0, no-store' );
+	// Allow the browser to reuse identical queries for 30 s (private = no CDN).
+	// The transient cache on the server side means the DB is only hit once per 5 min anyway.
+	$response->header( 'Cache-Control', 'private, max-age=30' );
 	return $response;
 }
 

@@ -14,6 +14,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 $home_url    = home_url( '/' );
 $placeholder = esc_attr__( 'Search mobiles, electronics, appliances and more', 'hitprice' );
 $trending    = function_exists( 'hp_get_trending_terms_for_overlay' ) ? hp_get_trending_terms_for_overlay( 8 ) : array();
+
+// Pre-render latest 6 published, visible products for the idle state.
+// Using wc_get_products() avoids a raw WP_Query and respects WC visibility rules.
+$featured_products = array();
+if ( function_exists( 'wc_get_products' ) ) {
+	$featured_products = wc_get_products(
+		array(
+			'status'     => 'publish',
+			'limit'      => 6,
+			'orderby'    => 'date',
+			'order'      => 'DESC',
+			'visibility' => 'catalog',
+		)
+	);
+}
 ?>
 <div
 	class="hp-search-overlay"
@@ -85,6 +100,19 @@ $trending    = function_exists( 'hp_get_trending_terms_for_overlay' ) ? hp_get_t
 		</form>
 
 		<div class="hp-search-overlay__body" data-hp-search-body>
+
+			<!-- Recent searches — populated by JS from localStorage -->
+			<section class="hp-search-overlay__recent" data-hp-search-recent hidden>
+				<div class="hp-search-overlay__heading-row">
+					<h2 class="hp-search-overlay__heading"><?php esc_html_e( 'Recent searches', 'hitprice' ); ?></h2>
+					<button type="button" class="hp-search-overlay__clear-recent" data-hp-search-clear-recent>
+						<?php esc_html_e( 'Clear', 'hitprice' ); ?>
+					</button>
+				</div>
+				<ul class="hp-search-overlay__chips" data-hp-search-recent-list></ul>
+			</section>
+
+			<!-- Trending chips — populated by JS after fetch -->
 			<section
 				class="hp-search-overlay__trending"
 				data-hp-search-trending
@@ -102,21 +130,67 @@ $trending    = function_exists( 'hp_get_trending_terms_for_overlay' ) ? hp_get_t
 				</ul>
 			</section>
 
+			<?php if ( ! empty( $featured_products ) ) : ?>
+			<!-- Featured products — shown in idle state, hidden when user starts typing -->
+			<section class="hp-search-overlay__featured" data-hp-search-featured>
+				<h2 class="hp-search-overlay__heading"><?php esc_html_e( 'Popular products', 'hitprice' ); ?></h2>
+				<ul class="hp-search-overlay__featured-grid">
+					<?php foreach ( $featured_products as $fp ) : ?>
+						<?php
+						$fp_id       = $fp->get_id();
+						$fp_name     = wp_strip_all_tags( $fp->get_name() );
+						$fp_url      = get_permalink( $fp_id );
+						$fp_price    = $fp->get_price_html();
+						$fp_img_id   = (int) $fp->get_image_id();
+						$fp_img_url  = $fp_img_id
+							? wp_get_attachment_image_url( $fp_img_id, 'woocommerce_gallery_thumbnail' )
+							: ( function_exists( 'wc_placeholder_img_src' ) ? wc_placeholder_img_src( 'woocommerce_gallery_thumbnail' ) : '' );
+						?>
+						<li>
+							<a
+								href="<?php echo esc_url( $fp_url ); ?>"
+								class="hp-search-overlay__featured-card"
+								aria-label="<?php echo esc_attr( $fp_name ); ?>"
+							>
+								<span class="hp-search-overlay__featured-img">
+									<?php if ( $fp_img_url ) : ?>
+										<img
+											src="<?php echo esc_url( $fp_img_url ); ?>"
+											alt=""
+											width="72"
+											height="72"
+											loading="lazy"
+											decoding="async"
+										>
+									<?php endif; ?>
+								</span>
+								<span class="hp-search-overlay__featured-name"><?php echo esc_html( $fp_name ); ?></span>
+								<span class="hp-search-overlay__featured-price">
+									<?php echo wp_kses(
+										$fp_price,
+										array(
+											'del'  => array( 'aria-hidden' => array() ),
+											'ins'  => array(),
+											'span' => array( 'class' => array() ),
+											'bdi'  => array(),
+										)
+									); ?>
+								</span>
+							</a>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			</section>
+			<?php endif; ?>
+
+			<!-- Live search results — hidden until user types -->
 			<section class="hp-search-overlay__results" data-hp-search-results hidden>
-				<div
-					class="hp-search-overlay__terms"
-					data-hp-search-terms
-					hidden
-				>
+				<div class="hp-search-overlay__terms" data-hp-search-terms hidden>
 					<h2 class="hp-search-overlay__heading"><?php esc_html_e( 'Suggestions', 'hitprice' ); ?></h2>
 					<ul class="hp-search-overlay__chips" data-hp-search-terms-list></ul>
 				</div>
 
-				<div
-					class="hp-search-overlay__products"
-					data-hp-search-products
-					hidden
-				>
+				<div class="hp-search-overlay__products" data-hp-search-products hidden>
 					<h2 class="hp-search-overlay__heading"><?php esc_html_e( 'Matching products', 'hitprice' ); ?></h2>
 					<ul
 						id="hp-search-overlay-listbox"
