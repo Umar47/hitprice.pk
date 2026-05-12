@@ -200,10 +200,12 @@
 /* ---- Related Products Slider ---- */
 .hp-related {
 	border: 1px solid #e8e8e8;
-	max-width: 1248px;
+	max-width: min(1248px, 100%);
 	margin: 24px auto 24px;
 	padding: 24px;
 	border-radius: 14px;
+	overflow: hidden;
+	box-sizing: border-box;
 }
 
 .hp-related__inner {
@@ -345,7 +347,9 @@
 
 @media (max-width: 767px) {
 	.hp-related {
-		padding: 32px 16px;
+		padding: 16px;
+		margin-left: 16px;
+		margin-right: 16px;
 	}
 
 	.hp-related__heading {
@@ -751,7 +755,7 @@
 	border: 1px solid #dce5f2;
 	border-radius: 12px;
 	padding: 0;
-	margin: 0 0 16px;
+	margin: 16px 0 16px;
 	background-color: #f0f6fe;
 	overflow: hidden;
 }
@@ -1257,6 +1261,12 @@
 }
 
 @media (max-width: 767px) {
+	.hp-tabs {
+		padding: 16px;
+		margin-left: 16px;
+		margin-right: 16px;
+	}
+
 	.hp-tabs__nav {
 		padding: 0 16px;
 	}
@@ -1534,7 +1544,7 @@
 	}
 
 	.hp-key-highlights__image-wrap {
-		display: none;
+		display: flex;
 	}
 
 	.hp-overview-specs-surface {
@@ -1840,10 +1850,13 @@
 
 .hp-tsb-item {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
-	gap: 14px;
+	justify-content: flex-start;
+	gap: 8px;
 	padding: 18px 20px;
 	border-right: 1px solid #e5e7eb;
+	text-align: center;
 }
 
 .hp-tsb-item:last-child {
@@ -1872,15 +1885,29 @@
 
 .hp-tsb-item__label {
 	font-size: 13.5px;
-	font-weight: 700;
+	font-weight: 300;
 	color: #111827;
 	line-height: 1.3;
+	word-break: break-word;
+	overflow-wrap: break-word;
+	max-width: 72px;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
 }
 
 .hp-tsb-item__desc {
 	font-size: 12px;
 	color: #6b7280;
 	line-height: 1.4;
+}
+
+@media (max-width: 767px) {
+	.hp-trust-strip-bottom {
+		margin-left: 16px;
+		margin-right: 16px;
+	}
 }
 
 @media (max-width: 900px) {
@@ -1903,12 +1930,12 @@
 
 @media (max-width: 480px) {
 	.hp-trust-strip-bottom__inner {
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(4, 1fr);
 	}
 
 	.hp-tsb-item {
-		padding: 14px 16px;
-		gap: 10px;
+		padding: 10px 8px;
+		gap: 6px;
 	}
 
 	.hp-tsb-item__icon-wrap i {

@@ -3,6 +3,9 @@
    Covers above-the-fold layout so no layout shift on load.
    ============================================================ */
 
+/* ── Prevent horizontal scroll on mobile ───────────────────── */
+html,body{overflow-x:hidden;max-width:100%;}
+
 /* ── Astra structural overrides ─────────────────────────────── */
 /* Override Astra dynamic inline CSS image box-shadow */
 .ast-article-single figure,.ast-article-single img:not(figure img){box-shadow:none;-webkit-box-shadow:none;-moz-box-shadow:none;}
@@ -46,6 +49,10 @@ body.single-product .ast-primary-content,body.single-product .ast-woocommerce-co
   background:#fff;
   border:1px solid #e8edf5;
   border-radius:18px;
+}
+/* Mobile: re-assert position:relative so absolute badges anchor to the card, not the page */
+@media(max-width:767px){
+  .hp-gallery-outer{position:relative;}
 }
 .hp-gallery-trust-strip{display:block;}
 
@@ -346,7 +353,7 @@ body.single-product .ast-primary-content,body.single-product .ast-woocommerce-co
     column-gap:0;
     padding:12px 16px 0;
   }
-  .hp-gallery-outer{grid-column:1;grid-row:auto;position:static;margin-bottom:18px;}
+  .hp-gallery-outer{grid-column:1;grid-row:auto;margin-bottom:18px;}
   .hp-gallery-trust-strip{grid-column:1;grid-row:auto;}
   .hp-product-layout .summary.entry-summary{grid-column:1;grid-row:auto;}
   /* Stock/viewers swap */

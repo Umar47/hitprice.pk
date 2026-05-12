@@ -1,10 +1,44 @@
 /*
 Theme Name: Hit Price Astra Child
 Theme URI: https://hitprice.local
-Description: Child theme for Hit Price custom storefront work on top of Astra.
+Description: Child theme for Hit Price custom storefront work on top of Astra. v1.1.0 adds: single product page full redesign — custom gallery, variation swatches, purchase action row (qty + Add to Cart + Buy Now in one horizontal flex row), overview tab 40/60 split with separator, key highlights vertical list with middle separator, why choose compact card with horizontal checklist, bottom trust strip with FA icons, related products slider, consistent green SVG checkmarks, delivery estimate bar, and payment methods strip.
 Author: Codex
 Template: astra
-Version: 1.0.0
+Version: 1.1.1
 Text Domain: hitprice
+
+Changelog:
+1.1.0 - 2026-05-11
+  - Rebuilt purchase action row: .hp-product-actions-row flex container wrapping
+    qty selector, Add to Cart, and Buy Now in a single horizontal row (52px height,
+    12px border-radius, Astra/WooCommerce style resets).
+  - Overview tab: 40/60 column split with vertical separator; consistent green SVG
+    checkmarks on all ul > li lists; spec grid typography swap (title first, value second).
+  - Key Highlights: vertical list layout, middle separator, centered image with padding.
+  - Why Choose: compact card, horizontal checkmark row.
+  - Bottom trust strip: rebuilt with Font Awesome icons, 4-col grid with dividers.
+  - Payment methods strip: now dynamic via admin settings (FA icon class fields).
+  - Delivery estimate bar: added justify-content center.
+  - Related slider: "Buy Now" CTA label, 14px border-radius.
+  - Max-width alignment across all sections (1248–1278px).
+  - Removed all .hp-features* CSS (unused Product Features section cleaned up).
+  - Tab system: Inter font, border-radius 14px nav-wrap, gap 20px, font-weight 600.
+
+1.1.1 - 2026-05-12
+  - Fixed horizontal scroll on mobile caused by related products slider overflow.
+  - Fixed gallery badges detaching from card on mobile (position: static remnant removed).
+  - Added overflow: hidden and box-sizing: border-box to .hp-related container.
+  - Fixed .hp-related mobile padding (was 32px top/bottom, corrected to 16px).
+  - Added html, body overflow-x: hidden as catch-all in critical CSS.
+  - Removed .hp-overview-specs-surface HTML output (duplicate of Overview tab specs).
+  - Enabled Key Highlights image on mobile (removed display: none at ≤900px).
+  - Added margin-top: 16px to .hp-payment-methods for correct spacing.
+
+1.0.0 - Initial release
+  - Custom gallery with sliding track, thumbnails, and zoom.
+  - Variation swatches (colour + storage).
+  - Sticky add-to-cart bar.
+  - Price icons strip, gallery badge overlays, gallery trust strip.
+  - Key highlights, why choose, why buy, product tabs, related products slider.
 */
 

@@ -34,19 +34,7 @@ $surface_specs = array_slice( $specs, 0, 4 );
 <section class="hp-key-highlights">
 	<div class="hp-key-highlights__inner">
 
-		<?php if ( ! empty( $surface_specs ) ) : ?>
-			<div class="hp-overview-specs-surface" aria-hidden="true">
-				<?php foreach ( $surface_specs as $spec ) : ?>
-					<div class="hp-overview-spec-item">
-						<?php if ( ! empty( $spec['icon'] ) ) : ?>
-							<i class="<?php echo esc_attr( $spec['icon'] ); ?> hp-overview-spec-item__icon" aria-hidden="true"></i>
-						<?php endif; ?>
-						<span class="hp-overview-spec-item__value"><?php echo esc_html( $spec['value'] ); ?></span>
-						<span class="hp-overview-spec-item__title"><?php echo esc_html( $spec['title'] ); ?></span>
-					</div>
-				<?php endforeach; ?>
-			</div>
-		<?php endif; ?>
+		<?php /* hp-overview-specs-surface hidden — data/logic preserved via $surface_specs above */ ?>
 
 		<div class="hp-key-highlights__cols<?php echo $image ? '' : ' hp-key-highlights__cols--no-image'; ?>">
 
