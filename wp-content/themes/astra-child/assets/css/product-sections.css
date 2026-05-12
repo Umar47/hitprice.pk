@@ -1885,16 +1885,9 @@
 
 .hp-tsb-item__label {
 	font-size: 13.5px;
-	font-weight: 300;
+	font-weight: 700;
 	color: #111827;
 	line-height: 1.3;
-	word-break: break-word;
-	overflow-wrap: break-word;
-	max-width: 72px;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
 }
 
 .hp-tsb-item__desc {
@@ -1944,6 +1937,14 @@
 
 	.hp-tsb-item__label {
 		font-size: 12px;
+		font-weight: 300;
+		max-width: 52px;
+		word-break: break-word;
+		overflow-wrap: break-word;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 
 	.hp-tsb-item__desc {
